@@ -1,0 +1,9 @@
+import { useI18n } from "vue-i18n";
+
+import { createSupplierSchemas } from "@/schemas/supplier";
+
+export const useSupplierSchemas = () => {
+	const { t } = useI18n();
+
+	return createSupplierSchemas(t);
+};

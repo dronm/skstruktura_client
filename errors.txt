@@ -1,0 +1,33 @@
+
+> skstruktura@0.1.0 type-check
+> vue-tsc --build
+
+src/components/contact/ContactForm.vue(121,8): error TS2322: Type '{ is_active: boolean; employee_post_id?: number | null | undefined; email?: string | undefined; name: string; phone: string; }' is not assignable to type 'ContactNew'.
+  Types of property 'email' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string | null'.
+      Type 'undefined' is not assignable to type 'string | null'.
+src/components/employeePost/EmployeePostForm.vue(66,24): error TS6133: 'error' is declared but its value is never read.
+src/components/employeePost/EmployeePostForm.vue(83,24): error TS6133: 'error' is declared but its value is never read.
+src/components/material/MaterialForm.vue(116,35): error TS2551: Property 'measure_unit' does not exist on type 'Partial<MaterialFormModel>'. Did you mean 'measure_unit_id'?
+src/components/notificationTemplate/NotificationTemplateForm.vue(68,24): error TS6133: 'error' is declared but its value is never read.
+src/components/notificationTemplate/NotificationTemplateForm.vue(83,24): error TS6133: 'error' is declared but its value is never read.
+src/components/notificationTemplate/NotificationTemplateForm.vue(99,24): error TS6133: 'error' is declared but its value is never read.
+src/components/notificationTemplate/NotificationTemplateForm.vue(115,24): error TS6133: 'error' is declared but its value is never read.
+src/components/user/UserEntityContactsGrid.vue(108,3): error TS2322: Type 'null' is not assignable to type 'Record<string, unknown> | undefined'.
+src/references/contactReferences.ts(78,19): error TS18047: 'value' is possibly 'null'.
+src/views/material/MaterialEditPage.vue(34,2): error TS2322: Type '{ serviceName: string | undefined; list: { (params?: CollectionParams): Promise<CollectionResponse<MaterialList>>; (params: CollectionParams | undefined, format: ExportFormats): Promise<void>; }; detail: (key: MaterialKey) => Promise<...>; create: (model: MaterialNew) => Promise<...>; update: (key: MaterialKey, mode...' is not assignable to type '{ detail: (key: MaterialKey) => Promise<MaterialList>; create: (model: MaterialNew) => Promise<MaterialKey>; update: (key: MaterialKey, model: Partial<...>) => Promise<...>; }'.
+  The types returned by 'detail(...)' are incompatible between these types.
+    Type 'Promise<Material>' is not assignable to type 'Promise<MaterialList>'.
+      Type 'Material' is missing the following properties from type 'MaterialList': measure_unit, balances
+src/views/materialConsumption/MaterialConsumptionList.vue(28,2): error TS2322: Type '{ serviceName: string | undefined; list: { (params?: CollectionParams): Promise<CollectionResponse<MaterialConsumptionList>>; (params: CollectionParams | undefined, format: ExportFormats): Promise<void>; }; detail: (key: MaterialConsumptionKey) => Promise<...>; create: (model: MaterialConsumptionNew) => Promise<...>...' is not assignable to type 'CollectionGridApi<MaterialConsumptionList, MaterialConsumptionKey, MaterialConsumptionNew, Partial<Pick<MaterialConsumption, "date" | ... 1 more ... | "construction_site_id">>, MaterialConsumptionDocument>'.
+  The types returned by 'detail(...)' are incompatible between these types.
+    Type 'Promise<MaterialConsumption>' is not assignable to type 'Promise<MaterialConsumptionDocument>'.
+      Type 'MaterialConsumption' is missing the following properties from type 'MaterialConsumptionDocument': construction_site, items
+src/views/materialReceipt/MaterialReceiptList.vue(28,2): error TS2322: Type '{ serviceName: string | undefined; list: { (params?: CollectionParams): Promise<CollectionResponse<MaterialReceiptList>>; (params: CollectionParams | undefined, format: ExportFormats): Promise<void>; }; detail: (key: MaterialReceiptKey) => Promise<...>; create: (model: MaterialReceiptNew) => Promise<...>; update: (k...' is not assignable to type 'CollectionGridApi<MaterialReceiptList, MaterialReceiptKey, MaterialReceiptNew, Partial<Pick<MaterialReceipt, "number" | ... 3 more ... | "supplier_id">>, MaterialReceiptDocument>'.
+  The types returned by 'detail(...)' are incompatible between these types.
+    Type 'Promise<MaterialReceipt>' is not assignable to type 'Promise<MaterialReceiptDocument>'.
+      Type 'MaterialReceipt' is missing the following properties from type 'MaterialReceiptDocument': construction_site, supplier, items
+src/views/materialTransfer/MaterialTransferList.vue(28,2): error TS2322: Type '{ serviceName: string | undefined; list: { (params?: CollectionParams): Promise<CollectionResponse<MaterialTransferList>>; (params: CollectionParams | undefined, format: ExportFormats): Promise<void>; }; detail: (key: MaterialTransferKey) => Promise<...>; create: (model: MaterialTransferNew) => Promise<...>; update:...' is not assignable to type 'CollectionGridApi<MaterialTransferList, MaterialTransferKey, MaterialTransferNew, Partial<Pick<MaterialTransfer, "date" | ... 2 more ... | "destination_construction_site_id">>, MaterialTransferDocument>'.
+  The types returned by 'detail(...)' are incompatible between these types.
+    Type 'Promise<MaterialTransfer>' is not assignable to type 'Promise<MaterialTransferDocument>'.
+      Type 'MaterialTransfer' is missing the following properties from type 'MaterialTransferDocument': source_construction_site, destination_construction_site, items

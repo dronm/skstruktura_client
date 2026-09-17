@@ -1,0 +1,171 @@
+{
+	"Login": {
+		"title": "АВТОРИЗАЦИЯ",
+		"login": {
+			"label": "",
+			"placeholder": "логин"
+		},
+		"pwd": {
+			"label": "",
+			"placeholder": "пароль"
+		},
+		"submit": "войти",
+		"tabs": {
+			"label": "Способ авторизации",
+			"max": "MAX",
+			"password": "Логин / пароль"
+		},
+		"max": {
+			"phoneLabel": "Телефон",
+			"phonePlaceholder": "+7(999)-999-99-99",
+			"hint": "Введите номер телефона, связанный с вашим контактом. В MAX придёт запрос на подтверждение входа.",
+			"submit": "Войти через MAX",
+			"waiting": "Ожидание подтверждения в MAX…",
+			"pending": "Запрос отправлен в MAX. Подтвердите или отклоните вход в чате с ботом.",
+			"declined": "Запрос на вход отклонён в MAX.",
+			"expired": "Время ожидания подтверждения истекло. Отправьте новый запрос.",
+			"consumed": "Этот запрос на вход уже использован. Отправьте новый запрос.",
+			"invalidPhone": "Введите российский номер телефона полностью."
+		}
+	},
+	"Main": {
+		"title": "Главная"
+	},
+	"RoleId": {
+		"admin": "Администратор",
+		"constr_manager": "Прораб",
+		"accountant": "Бухгалтер"
+	},
+	"User": {
+		"title": "Пользователи",
+		"fields": {
+			"id": "ID",
+			"name": "Логин",
+			"role_id": "Роль",
+			"pwd": "Пароль"
+		},
+		"form": {
+			"create": "Создание: Пользователи",
+			"edit": "Изменение: Пользователи",
+			"copy": "Копирование: Пользователи",
+			"view": "Просмотр: Пользователи"
+		},
+		"errors": {
+			"invalidId": "Некорректный идентификатор пользователя"
+		}
+	},
+	"Grid": {
+		"totals": "Итого",
+		"commands": {
+			"create": "Создать",
+			"edit": "Изменить",
+			"copy": "Копировать",
+			"delete": "Удалить",
+			"search": "Поиск",
+			"refresh": "Обновить",
+			"save": "Сохранить",
+			"cancel": "Отмена",
+			"back": "Назад",
+			"history": "История",
+			"clear": "Очистить"
+		},
+		"loading": "Загрузка...",
+		"copySuffix": "копия"
+	},
+	"Report": {
+		"commands": {
+			"generate": "Сформировать",
+			"exportExcel": "Экспорт в Excel",
+			"print": "Печать"
+		},
+		"filters": {
+			"referenceRequired": "Выберите значение",
+			"referenceDuplicate": "Это значение уже выбрано"
+		}
+	},
+	"MaterialActionReport": {
+		"title": "Движение материалов",
+		"sheetName": "Движение материалов",
+		"generatedAt": "Сформирован",
+		"notGenerated": "Укажите параметры и сформируйте отчёт",
+		"empty": "За выбранный период данных нет",
+		"filters": {
+			"period": "Период",
+			"from": "С",
+			"to": "По",
+			"title": "Фильтры",
+			"dateFrom": "Начало периода",
+			"dateTo": "Конец периода",
+			"constructionSites": "Объекты строительства",
+			"materials": "Материалы",
+			"all": "Все"
+		},
+		"columns": {
+			"grouping": "Группировка",
+			"balanceStart": "Остаток нач.",
+			"income": "Приход",
+			"outcome": "Расход",
+			"balanceEnd": "Остаток кон."
+		},
+		"errors": {
+			"periodRequired": "Начало и конец периода обязательны",
+			"invalidPeriod": "Начало периода не может быть позже конца",
+			"notGenerated": "Сначала сформируйте отчёт"
+		}
+	},
+	"validation": {
+		"required": "Поле обязательно для заполнения",
+		"maxLen": "Максимальная длина: {maxLen}",
+		"minVal": "Минимальное значение: {minVal}",
+		"maxVal": "Максимальное значение: {maxVal}",
+		"dataTypeInt": "Ожидается целое число"
+	},
+	"MaterialReceiptItem": {
+		"title": "Материалы",
+		"fields": {
+			"line_num": "№",
+			"material_id": "Материал",
+			"measure_unit_id": "Ед. изм.",
+			"construction_site_id": "Объект",
+			"quant": "Количество",
+			"price": "Цена",
+			"amount": "Сумма",
+			"vat_percent": "НДС, %",
+			"vat_amount": "Сумма НДС"
+		}
+	},
+	"MaterialConsumptionItem": {
+		"title": "Материалы",
+		"fields": {
+			"line_num": "№",
+			"material_id": "Материал",
+			"measure_unit_id": "Ед. изм.",
+			"quant": "Количество"
+		}
+	},
+	"MaterialTransferItem": {
+		"title": "Материалы",
+		"fields": {
+			"line_num": "№",
+			"material_id": "Материал",
+			"measure_unit_id": "Ед. изм.",
+			"quant": "Количество"
+		}
+	},
+	"Supplier": {
+		"validation": {
+			"innLength": "ИНН должен содержать 10 или 12 символов.",
+			"kppRequired": "Для ИНН из 10 символов необходимо указать КПП.",
+			"kppForbidden": "Для ИНН из 12 символов КПП должен быть пустым."
+		}
+	},
+	"EntityContact": {
+		"title": "Контакты",
+		"fields": {
+			"contact_id": "Контакт"
+		},
+		"commands": {
+			"createContact": "Создать новый контакт"
+		}
+	}
+}
