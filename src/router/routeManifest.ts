@@ -20,6 +20,8 @@ const MaterialActionReportPage = () =>
 	import("@/views/reports/MaterialActionReportPage.vue");
 const MaterialBalancePage = () =>
 	import("@/views/reports/MaterialBalancePage.vue");
+const ConstructionManagerWorkspace = () =>
+	import("@/views/constructionManager/ConstructionManagerWorkspace.vue");
 const DiadocDocumentList = () =>
 	import("@/views/diadoc/DiadocDocumentList.vue");
 const DiadocDocumentEditPage = () =>
@@ -55,6 +57,22 @@ const manualRouteManifest: RouteManifestEntry[] = [
 			descr: "Главная",
 			section: "Формы",
 			icon: null,
+			menu_available: false,
+		},
+	),
+	defineRoute(
+		{
+			path: "/construction-manager",
+			name: "constructionManagerWorkspace",
+			component: ConstructionManagerWorkspace,
+			meta: {
+				roleId: "construction_site_manager",
+			},
+		},
+		{
+			descr: "Рабочее место прораба",
+			section: "Формы",
+			icon: "pi pi-briefcase",
 			menu_available: false,
 		},
 	),

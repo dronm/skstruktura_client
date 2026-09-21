@@ -82,6 +82,7 @@ onBeforeUnmount(clearPrintMode);
 				:disabled="!props.hasContent"
 				@click="printReport"
 			/>
+			<slot name="actions" />
 		</div>
 
 		<div ref="content" class="report-print-root p-4">

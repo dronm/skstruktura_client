@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 
 import { userApi } from "@/api/user";
+import { getDefaultRouteForRole } from "@/router/defaultRoute";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { UserLoginRequest } from "@/types/user";
 import type { UserMaxAuthStatus } from "@/types/userMaxAuth";
@@ -52,9 +53,7 @@ const formatRussianPhone = (value: string): string => {
 		return "";
 	}
 
-	const national = digits.startsWith("7")
-		? digits.slice(1)
-		: digits;
+	const national = digits.startsWith("7") ? digits.slice(1) : digits;
 	let result = "+7";
 
 	if (national.length > 0) {
@@ -78,31 +77,30 @@ const formatRussianPhone = (value: string): string => {
 
 const normalizedMaxPhone = computed((): string => {
 	const digits = normalizePhoneDigits(maxPhone.value);
-	return digits.length === 11 && digits.startsWith("7")
-		? digits
-		: "";
+	return digits.length === 11 && digits.startsWith("7") ? digits : "";
 });
 
 const maxRequestActive = computed((): boolean => {
 	return (
 		maxRequestID.value !== null &&
-		(maxStatus.value === "pending" || maxStatus.value === "approved")
+		(maxStatus.value === "pending" ||
+			maxStatus.value === "approved")
 	);
 });
 
 const maxStatusMessage = computed((): string => {
 	switch (maxStatus.value) {
-	case "pending":
-	case "approved":
-		return t("Login.max.pending");
-	case "declined":
-		return t("Login.max.declined");
-	case "expired":
-		return t("Login.max.expired");
-	case "consumed":
-		return t("Login.max.consumed");
-	default:
-		return "";
+		case "pending":
+		case "approved":
+			return t("Login.max.pending");
+		case "declined":
+			return t("Login.max.declined");
+		case "expired":
+			return t("Login.max.expired");
+		case "consumed":
+			return t("Login.max.consumed");
+		default:
+			return "";
 	}
 });
 
@@ -114,12 +112,7 @@ const maxStatusClass = computed((): string => {
 });
 
 const redirectAfterLogin = async (): Promise<void> => {
-	await router.push({
-		name:
-			authStore.user?.role_id === "admin"
-				? "users"
-				: "userProfile",
-	});
+	await router.push(getDefaultRouteForRole(authStore.user?.role_id));
 };
 
 const clearMaxPoll = (): void => {
@@ -282,7 +275,9 @@ onBeforeUnmount(() => {
 					<button
 						type="button"
 						role="tab"
-						:aria-selected="activeTab === 'max'"
+						:aria-selected="
+							activeTab === 'max'
+						"
 						class="rounded-xl px-3 py-2.5 text-sm font-semibold transition"
 						:class="
 							activeTab === 'max'
@@ -297,7 +292,9 @@ onBeforeUnmount(() => {
 					<button
 						type="button"
 						role="tab"
-						:aria-selected="activeTab === 'password'"
+						:aria-selected="
+							activeTab === 'password'
+						"
 						class="rounded-xl px-3 py-2.5 text-sm font-semibold transition"
 						:class="
 							activeTab === 'password'
@@ -321,26 +318,46 @@ onBeforeUnmount(() => {
 								for="maxPhone"
 								class="block text-sm font-medium text-slate-700"
 							>
-								{{ t("Login.max.phoneLabel") }}
+								{{
+									t(
+										"Login.max.phoneLabel",
+									)
+								}}
 							</label>
 
 							<input
 								id="maxPhone"
 								ref="maxPhoneInput"
-								:value="maxPhone"
+								:value="
+									maxPhone
+								"
 								type="tel"
 								inputmode="tel"
 								autocomplete="tel"
 								required
-								:disabled="maxRequestActive"
+								:disabled="
+									maxRequestActive
+								"
 								class="block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 disabled:bg-slate-100 disabled:text-slate-500"
-								:placeholder="t('Login.max.phonePlaceholder')"
-								@input="handleMaxPhoneInput"
+								:placeholder="
+									t(
+										'Login.max.phonePlaceholder',
+									)
+								"
+								@input="
+									handleMaxPhoneInput
+								"
 							/>
 						</div>
 
-						<p class="text-sm leading-6 text-slate-500">
-							{{ t("Login.max.hint") }}
+						<p
+							class="text-sm leading-6 text-slate-500"
+						>
+							{{
+								t(
+									"Login.max.hint",
+								)
+							}}
 						</p>
 
 						<div
@@ -371,8 +388,12 @@ onBeforeUnmount(() => {
 						>
 							{{
 								maxRequestActive
-									? t("Login.max.waiting")
-									: t("Login.max.submit")
+									? t(
+											"Login.max.waiting",
+										)
+									: t(
+											"Login.max.submit",
+										)
 							}}
 						</button>
 					</form>
@@ -380,25 +401,37 @@ onBeforeUnmount(() => {
 					<form
 						v-else
 						class="space-y-5"
-						@submit.prevent="handlePasswordLogin"
+						@submit.prevent="
+							handlePasswordLogin
+						"
 					>
 						<div class="space-y-2">
 							<label
 								for="userLogin"
 								class="block text-sm font-medium text-slate-700"
 							>
-								{{ t("Login.login.label") }}
+								{{
+									t(
+										"Login.login.label",
+									)
+								}}
 							</label>
 
 							<input
 								id="userLogin"
 								ref="loginInput"
-								v-model="userLogin"
+								v-model="
+									userLogin
+								"
 								type="text"
 								required
 								autocomplete="username"
 								class="block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-								:placeholder="t('Login.login.placeholder')"
+								:placeholder="
+									t(
+										'Login.login.placeholder',
+									)
+								"
 							/>
 						</div>
 
@@ -407,30 +440,46 @@ onBeforeUnmount(() => {
 								for="userPwd"
 								class="block text-sm font-medium text-slate-700"
 							>
-								{{ t("Login.pwd.label") }}
+								{{
+									t(
+										"Login.pwd.label",
+									)
+								}}
 							</label>
 
 							<input
 								id="userPwd"
-								v-model="userPwd"
+								v-model="
+									userPwd
+								"
 								type="password"
 								required
 								autocomplete="current-password"
 								class="block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-								:placeholder="t('Login.pwd.placeholder')"
+								:placeholder="
+									t(
+										'Login.pwd.placeholder',
+									)
+								"
 							/>
 						</div>
 
 						<div
-							v-if="passwordErrorMessage"
+							v-if="
+								passwordErrorMessage
+							"
 							class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
 						>
-							{{ passwordErrorMessage }}
+							{{
+								passwordErrorMessage
+							}}
 						</div>
 
 						<button
 							type="submit"
-							:disabled="passwordSubmitting"
+							:disabled="
+								passwordSubmitting
+							"
 							class="w-full rounded-xl bg-blue-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
 						>
 							{{ t("Login.submit") }}
