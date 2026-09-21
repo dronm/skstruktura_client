@@ -17,7 +17,7 @@ type ListModel = MaterialConsumptionList;
 type CreateModel = MaterialConsumptionNew;
 type UpdateModel = MaterialConsumptionUpd;
 const formatDate = (value: unknown): string => value instanceof Date
-	? value.toLocaleString("ru-RU")
+	? value.toLocaleDateString("ru-RU")
 	: "";
 const commands: GridCommand<ListModel, MaterialConsumptionKey>[] = [
 	{ name: "create" },

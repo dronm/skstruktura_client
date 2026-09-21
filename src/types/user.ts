@@ -10,10 +10,21 @@ import type {
 
 import type { RoleId } from "@/types/enums/roleId";
 
-export type UserDTO = UserBaseDTO<RoleId>;
-export type User = UserBase<RoleId>;
+export type UserListDTO = UserBaseDTO<RoleId>;
+export type UserDTO = UserBaseDTO<RoleId> & {
+	construction_site_ids: number[];
+};
+export type User = UserBase<RoleId> & {
+	construction_site_ids: number[];
+};
 export type UserKey = UserKeyBase;
-export type UserNew = UserNewBase<RoleId>;
-export type UserUpd = UserUpdBase<RoleId>;
-export type UserUpdate = UserUpdateBase<RoleId>;
+export type UserNew = UserNewBase<RoleId> & {
+	construction_site_ids?: number[];
+};
+export type UserUpd = UserUpdBase<RoleId> & {
+	construction_site_ids?: number[];
+};
+export type UserUpdate = Omit<UserUpdateBase<RoleId>, "model"> & {
+	model: UserUpd;
+};
 export type UserLoginRequest = UserLoginRequestBase;

@@ -73,19 +73,6 @@ export const employeePostCollection = defineCollection<
 		id: row.id,
 	}),
 	routes: {
-		create: () => ({ name: "employeePostCreate" }),
-		edit: (row) => ({
-			name: "employeePostEdit",
-			params: {
-				id: String(row.id),
-			},
-		}),
-		copy: (row) => ({
-			name: "employeePostCreate",
-			query: {
-				copy_id: String(row.id),
-			},
-		}),
 	},
 	editMode: "inline",
 	createRow,

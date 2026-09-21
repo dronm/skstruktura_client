@@ -1,0 +1,7 @@
+{
+	"version": 1,
+	"files": [
+		"src/types/enums/materialStatusType.gen.ts",
+		"src/schemas/enums/materialStatusType.gen.ts"
+	]
+}

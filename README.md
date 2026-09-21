@@ -46,7 +46,8 @@ The development backend is configured as `http://localhost:59000` and WebSocket 
 - shared program-about dialog;
 - shared main-menu constructor;
 - Users CRUD;
-- role schema generated from backend `RoleID` (`admin`);
+- role schema synchronized with backend `RoleID` (`admin`,
+  `construction_site_manager`, `accountant`, `supplier`);
 - backend session cookies (`credentials: include`);
 - collection WebSocket support.
 

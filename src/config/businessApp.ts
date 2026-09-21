@@ -4,7 +4,7 @@ import api from "@/api/http";
 import { i18n } from "@/i18n";
 import { applicationRouteManifest } from "@/router/routeManifest";
 import { RoleIdSchema } from "@/schemas/enums/roleId";
-import type { RoleId } from "@/types/enums/roleId";
+import { ROLE_ID_VALUES, type RoleId } from "@/types/enums/roleId";
 
 const translate = (
 	key: string,
@@ -27,20 +27,10 @@ export const businessAppConfig: BusinessAppConfig<RoleId> = {
 	},
 	applicationRouteManifest,
 	roles: {
-		options: [
-			{
-				value: "admin",
-				label: translate("RoleId.admin"),
-			},
-			{
-				value: "constr_manager",
-				label: translate("RoleId.constr_manager"),
-			},
-			{
-				value: "accountant",
-				label: translate("RoleId.accountant"),
-			},
-		],
+		options: ROLE_ID_VALUES.map((value) => ({
+			value,
+			label: translate(`RoleId.${value}`),
+		})),
 		defaultRoleId: "admin",
 		schema: RoleIdSchema,
 	},

@@ -82,19 +82,6 @@ export const materialTypeCollection = defineCollection<
 		id: row.id,
 	}),
 	routes: {
-		create: () => ({ name: "materialTypeCreate" }),
-		edit: (row) => ({
-			name: "materialTypeEdit",
-			params: {
-				id: String(row.id),
-			},
-		}),
-		copy: (row) => ({
-			name: "materialTypeCreate",
-			query: {
-				copy_id: String(row.id),
-			},
-		}),
 	},
 	editMode: "inline",
 	createRow,

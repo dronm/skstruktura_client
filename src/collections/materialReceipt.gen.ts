@@ -17,7 +17,7 @@ type ListModel = MaterialReceiptList;
 type CreateModel = MaterialReceiptNew;
 type UpdateModel = MaterialReceiptUpd;
 const formatDate = (value: unknown): string => value instanceof Date
-	? value.toLocaleString("ru-RU")
+	? value.toLocaleDateString("ru-RU")
 	: "";
 const commands: GridCommand<ListModel, MaterialReceiptKey>[] = [
 	{ name: "create" },

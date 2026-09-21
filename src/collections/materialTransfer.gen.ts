@@ -17,7 +17,7 @@ type ListModel = MaterialTransferList;
 type CreateModel = MaterialTransferNew;
 type UpdateModel = MaterialTransferUpd;
 const formatDate = (value: unknown): string => value instanceof Date
-	? value.toLocaleString("ru-RU")
+	? value.toLocaleDateString("ru-RU")
 	: "";
 const commands: GridCommand<ListModel, MaterialTransferKey>[] = [
 	{ name: "create" },

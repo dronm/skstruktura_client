@@ -6,6 +6,7 @@ import Dialog from "primevue/dialog";
 
 import { userApi } from "@/api/user";
 import ObjectHistoryButton from "@/components/history/ObjectHistoryButton.vue";
+import UserConstructionSitesGrid from "@/components/user/UserConstructionSitesGrid.vue";
 import UserForm from "@/components/user/UserForm.vue";
 import { useUserSchemas } from "@/composables/schemas/useUserSchemas";
 import type { User, UserKey, UserNew, UserUpd } from "@/types/user";
@@ -19,6 +20,10 @@ type UserFormMode = "create" | "edit" | "copy";
 type UserFormModel = Partial<User> & {
 	pwd?: string;
 };
+
+interface PendingEditGuard {
+	hasPendingEdit: () => boolean;
+}
 
 const props = defineProps<{
 	visible: boolean;
@@ -38,6 +43,8 @@ const formErrors = useFormErrors();
 const loading = ref(false);
 const loadError = ref("");
 const model = ref<UserFormModel>({});
+const constructionSiteIDs = ref<number[]>([]);
+const constructionSitesGrid = ref<PendingEditGuard | null>(null);
 let loadSequence = 0;
 
 const visibleModel = computed({
@@ -60,7 +67,7 @@ const formSubmit = useCollectionFormSubmit<
 	api: userApi,
 	mode: computed(() => props.mode),
 	key,
-	fields: ["name", "role_id", "pwd"],
+	fields: ["name", "role_id", "pwd", "construction_site_ids"],
 	createSchema: userSchemas.UserNewSchema,
 	updateSchema: userSchemas.UserUpdSchema,
 	errors: formErrors,
@@ -74,7 +81,9 @@ const resetCreateModel = (): void => {
 		name: "",
 		role_id: "admin",
 		pwd: "",
+		construction_site_ids: [],
 	};
+	constructionSiteIDs.value = [];
 	formSubmit.setInitialModel(null);
 };
 
@@ -109,11 +118,15 @@ const load = async (): Promise<void> => {
 				name: `${detail.name} - ${t("Grid.copySuffix")}`,
 				pwd: "",
 			};
+			constructionSiteIDs.value = [
+				...detail.construction_site_ids,
+			];
 			formSubmit.setInitialModel(null);
 			return;
 		}
 
 		model.value = detail;
+		constructionSiteIDs.value = [...detail.construction_site_ids];
 		formSubmit.setInitialModel(detail);
 	} catch (error: unknown) {
 		if (sequence === loadSequence) {
@@ -127,7 +140,17 @@ const load = async (): Promise<void> => {
 };
 
 const submit = async (formModel: UserNew | UserUpd): Promise<void> => {
-	await formSubmit.submit(formModel as UserFormModel);
+	if (constructionSitesGrid.value?.hasPendingEdit()) {
+		formErrors.setForm(
+			t("User.constructionSites.errors.finishEditing"),
+		);
+		return;
+	}
+
+	await formSubmit.submit({
+		...formModel,
+		construction_site_ids: [...constructionSiteIDs.value],
+	});
 };
 
 const cancel = (): void => {
@@ -188,7 +211,20 @@ watch(
 				:submitting="formSubmit.submitting.value"
 				@submit="submit"
 				@cancel="cancel"
-			/>
+			>
+				<template #before-actions>
+					<div
+						class="border-t border-gray-200 pt-5"
+					>
+						<UserConstructionSitesGrid
+							ref="constructionSitesGrid"
+							v-model="
+								constructionSiteIDs
+							"
+						/>
+					</div>
+				</template>
+			</UserForm>
 		</template>
 	</Dialog>
 </template>

@@ -32,8 +32,8 @@
 		"title": "Должности",
 		"fields": {
 			"id": "ID",
-			"is_active": "is active",
-			"name": "name"
+			"is_active": "Активна",
+			"name": "Наименование"
 		},
 		"form": {
 			"create": "Должности",
@@ -52,7 +52,7 @@
 			"name_full": "Полн. наименование"
 		},
 		"form": {
-			"create": "Новвый материал",
+			"create": "Новый материал",
 			"edit": "Материал",
 			"copy": "Копия материалa"
 		}
@@ -87,6 +87,21 @@
 			"copy": "Копия поступления материалов"
 		}
 	},
+	"MaterialStatus": {
+		"title": "Статусы материалов",
+		"fields": {
+			"created_at": "Дата",
+			"id": "ID",
+			"is_active": "Активна",
+			"material_id": "Материал",
+			"status": "Статус"
+		},
+		"form": {
+			"create": "Статусы материалов",
+			"edit": "Статусы материалов",
+			"copy": "Статусы материалов"
+		}
+	},
 	"MaterialTransfer": {
 		"title": "Перемещения материалов",
 		"fields": {
@@ -105,10 +120,10 @@
 	"MaterialType": {
 		"title": "Виды материалов",
 		"fields": {
-			"code": "code",
+			"code": "Код",
 			"id": "ID",
-			"is_active": "is active",
-			"name": "name"
+			"is_active": "Активна",
+			"name": "Наименование"
 		},
 		"form": {
 			"create": "Виды материалов",
@@ -120,10 +135,9 @@
 		"title": "Пользователи MAX",
 		"fields": {
 			"contact": "Контакт",
-			"contact_id": "Контакт",
 			"is_active": "Активен",
 			"max_user_id": "Идентификатор MAX",
-			"username": "Имя пользователя MAX"
+			"username": "Имя MAX"
 		},
 		"form": {
 			"create": "Новый пользователь MAX",
@@ -176,5 +190,9 @@
 			"edit": "Поставщик",
 			"copy": "Копия поставщик"
 		}
+	},
+	"MaterialStatusType": {
+		"at_work": "В работе",
+		"on_maintenance": "На обслуживании"
 	}
 }

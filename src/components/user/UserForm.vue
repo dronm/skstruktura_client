@@ -153,6 +153,8 @@ const submit = (): void => {
 			</div>
 		</div>
 
+		<slot name="before-actions" />
+
 		<div class="flex justify-end gap-2">
 			<Button
 				type="button"

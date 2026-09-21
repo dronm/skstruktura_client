@@ -1,9 +1,15 @@
-import { createUserApi } from "@katren/vue-business-app/user";
-
 import api from "@/api/http";
-import { defaultTranslate } from "@/schemas/common";
-import { RoleIdSchema } from "@/schemas/enums/roleId";
-import type { UserLoginRequest } from "@/types/user";
+import { createCrudApi } from "@/api/createCrudApi";
+import { userFromDTO, userListFromDTO } from "@/schemas/user";
+import type {
+	User,
+	UserDTO,
+	UserKey,
+	UserListDTO,
+	UserLoginRequest,
+	UserNew,
+	UserUpd,
+} from "@/types/user";
 import type { UserLoginResponse } from "@/types/userLogin";
 import type {
 	UserMaxAuthCompleteRequest,
@@ -21,7 +27,21 @@ const routes = {
 	logout: `${basePath}/logout`,
 };
 
-const userCrudApi = createUserApi(api, RoleIdSchema, defaultTranslate);
+const userCrudApi = createCrudApi<
+	User,
+	UserListDTO,
+	User,
+	UserDTO,
+	UserKey,
+	UserNew,
+	UserUpd
+>({
+	basePath,
+	serviceName: "User",
+	getKeyValue: (key) => key.id,
+	fromListDTO: userListFromDTO,
+	fromDetailDTO: userFromDTO,
+});
 
 export const userApi = {
 	...userCrudApi,

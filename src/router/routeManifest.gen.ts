@@ -8,17 +8,16 @@ const ConstructionSiteEditPage = () => import("@/views/constructionSite/Construc
 const ContactList = () => import("@/views/contact/ContactList.vue");
 const ContactEditPage = () => import("@/views/contact/ContactEditPage.vue");
 const EmployeePostList = () => import("@/views/employeePost/EmployeePostList.vue");
-const EmployeePostEditPage = () => import("@/views/employeePost/EmployeePostEditPage.vue");
 const MaterialList = () => import("@/views/material/MaterialList.vue");
 const MaterialEditPage = () => import("@/views/material/MaterialEditPage.vue");
 const MaterialConsumptionList = () => import("@/views/materialConsumption/MaterialConsumptionList.vue");
 const MaterialConsumptionEditPage = () => import("@/views/materialConsumption/MaterialConsumptionEditPage.vue");
 const MaterialReceiptList = () => import("@/views/materialReceipt/MaterialReceiptList.vue");
 const MaterialReceiptEditPage = () => import("@/views/materialReceipt/MaterialReceiptEditPage.vue");
+const MaterialStatusList = () => import("@/views/materialStatus/MaterialStatusList.vue");
 const MaterialTransferList = () => import("@/views/materialTransfer/MaterialTransferList.vue");
 const MaterialTransferEditPage = () => import("@/views/materialTransfer/MaterialTransferEditPage.vue");
 const MaterialTypeList = () => import("@/views/materialType/MaterialTypeList.vue");
-const MaterialTypeEditPage = () => import("@/views/materialType/MaterialTypeEditPage.vue");
 const MaxUserList = () => import("@/views/maxUser/MaxUserList.vue");
 const MeasureUnitList = () => import("@/views/measureUnit/MeasureUnitList.vue");
 const MeasureUnitEditPage = () => import("@/views/measureUnit/MeasureUnitEditPage.vue");
@@ -140,33 +139,6 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 	),
 	defineGeneratedRoute(
 		{
-			path: "/employee-post/new",
-			name: "employeePostCreate",
-			component: EmployeePostEditPage,
-		},
-		{
-			descr: "Должности",
-			section: "Формы",
-			icon: null,
-			menu_available: false,
-		},
-	),
-	defineGeneratedRoute(
-		{
-			path: "/employee-post/:id",
-			name: "employeePostEdit",
-			component: EmployeePostEditPage,
-			props: true,
-		},
-		{
-			descr: "Должности",
-			section: "Формы",
-			icon: null,
-			menu_available: false,
-		},
-	),
-	defineGeneratedRoute(
-		{
 			path: "/material",
 			name: "materials",
 			component: MaterialList,
@@ -185,7 +157,7 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 			component: MaterialEditPage,
 		},
 		{
-			descr: "Новвый материал",
+			descr: "Новый материал",
 			section: "Формы",
 			icon: null,
 			menu_available: false,
@@ -287,6 +259,19 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 	),
 	defineGeneratedRoute(
 		{
+			path: "/material-statuses",
+			name: "materialStatuses",
+			component: MaterialStatusList,
+		},
+		{
+			descr: "Статусы материалов",
+			section: "Справочники",
+			icon: "pi pi-tags",
+			menu_available: true,
+		},
+	),
+	defineGeneratedRoute(
+		{
 			path: "/material-transfers",
 			name: "materialTransfers",
 			component: MaterialTransferList,
@@ -336,33 +321,6 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 			section: "Справочники",
 			icon: "pi pi-bookmark",
 			menu_available: true,
-		},
-	),
-	defineGeneratedRoute(
-		{
-			path: "/material-types/new",
-			name: "materialTypeCreate",
-			component: MaterialTypeEditPage,
-		},
-		{
-			descr: "Виды материалов",
-			section: "Формы",
-			icon: null,
-			menu_available: false,
-		},
-	),
-	defineGeneratedRoute(
-		{
-			path: "/material-types/:id",
-			name: "materialTypeEdit",
-			component: MaterialTypeEditPage,
-			props: true,
-		},
-		{
-			descr: "Виды материалов",
-			section: "Формы",
-			icon: null,
-			menu_available: false,
 		},
 	),
 	defineGeneratedRoute(
