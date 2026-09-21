@@ -4,6 +4,11 @@ import type {
 } from "@/types/materialConsumption.gen";
 import type { MaterialConsumptionItem } from "@/types/materialConsumptionItem.gen";
 import type {
+	MaterialRequest,
+	MaterialRequestDTO,
+} from "@/types/materialRequest.gen";
+import type { MaterialRequestItem } from "@/types/materialRequestItem.gen";
+import type {
 	MaterialReceipt,
 	MaterialReceiptDTO,
 } from "@/types/materialReceipt.gen";
@@ -198,4 +203,81 @@ export interface MaterialTransferDocumentSave {
 	destination_construction_site_id: number;
 	comment: string | null;
 	items: MaterialTransferDocumentSaveItem[];
+}
+
+export interface MaterialRequestDocumentItemDTO {
+	id: number;
+	line_num: number;
+	material_id: number;
+	measure_unit_id: number;
+	quant: number;
+	supplier_id: number | null;
+	required_date: string | null;
+	order_importance_id: number;
+	status_id: number;
+	material: MaterialDocumentReference;
+	measure_unit: MaterialDocumentReference;
+	supplier: MaterialDocumentReference | null;
+	order_importance: MaterialDocumentReference;
+	status: MaterialDocumentReference;
+}
+
+export interface MaterialRequestDocumentDTO extends MaterialRequestDTO {
+	construction_site: MaterialDocumentReference;
+	construction_manager: MaterialDocumentReference;
+	items: MaterialRequestDocumentItemDTO[];
+}
+
+export interface MaterialRequestDocumentItem extends MaterialRequestItem {
+	material: MaterialDocumentReference;
+	measure_unit: MaterialDocumentReference;
+	supplier: MaterialDocumentReference | null;
+	order_importance: MaterialDocumentReference;
+	status: MaterialDocumentReference;
+}
+
+export interface MaterialRequestDocument extends MaterialRequest {
+	construction_site: MaterialDocumentReference;
+	construction_manager: MaterialDocumentReference;
+	items: MaterialRequestDocumentItem[];
+}
+
+export interface MaterialRequestDocumentForm {
+	construction_site?: MaterialDocumentReference | null;
+	construction_manager?: MaterialDocumentReference | null;
+
+	id: number;
+	version: number;
+	date: Date | undefined;
+	construction_site_id: number;
+	construction_manager_id: number;
+	comment: string | null;
+	items: (MaterialRequestItem & {
+		material?: MaterialDocumentReference;
+		measure_unit?: MaterialDocumentReference;
+		supplier?: MaterialDocumentReference | null;
+		order_importance?: MaterialDocumentReference;
+		status?: MaterialDocumentReference;
+	})[];
+}
+
+export interface MaterialRequestDocumentSaveItem {
+	id?: number;
+	material_id: number;
+	measure_unit_id: number;
+	quant: number;
+	supplier_id: number | null;
+	required_date: Date | null;
+	order_importance_id: number;
+	status_id: number;
+}
+
+export interface MaterialRequestDocumentSave {
+	id: number;
+	version: number;
+	date: Date;
+	construction_site_id: number;
+	construction_manager_id: number;
+	comment: string | null;
+	items: MaterialRequestDocumentSaveItem[];
 }

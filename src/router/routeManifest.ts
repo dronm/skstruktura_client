@@ -18,6 +18,8 @@ const UserEditPage = () => import("@/views/user/UserEditPage.vue");
 const UserProfile = () => import("@/views/user/UserProfile.vue");
 const MaterialActionReportPage = () =>
 	import("@/views/reports/MaterialActionReportPage.vue");
+const MaterialBalancePage = () =>
+	import("@/views/reports/MaterialBalancePage.vue");
 const DiadocDocumentList = () =>
 	import("@/views/diadoc/DiadocDocumentList.vue");
 const DiadocDocumentEditPage = () =>
@@ -64,6 +66,19 @@ const manualRouteManifest: RouteManifestEntry[] = [
 		},
 		{
 			descr: "Движение материалов",
+			section: "Отчёты",
+			icon: "pi pi-chart-bar",
+			menu_available: true,
+		},
+	),
+	defineRoute(
+		{
+			path: "/material-balance",
+			name: "materialBalance",
+			component: MaterialBalancePage,
+		},
+		{
+			descr: "Остатки материалов",
 			section: "Отчёты",
 			icon: "pi pi-chart-bar",
 			menu_available: true,

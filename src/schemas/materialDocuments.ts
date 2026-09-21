@@ -12,6 +12,8 @@ import {
 import type {
 	MaterialConsumptionDocument,
 	MaterialConsumptionDocumentDTO,
+	MaterialRequestDocument,
+	MaterialRequestDocumentDTO,
 	MaterialReceiptDocument,
 	MaterialReceiptDocumentDTO,
 	MaterialTransferDocument,
@@ -21,6 +23,7 @@ import type {
 const VersionSchema = v.pipe(IntSchema, v.minValue(1));
 const VatPercentSchema = v.pipe(NumberSchema, v.minValue(0), v.maxValue(100));
 const VatAmountSchema = v.pipe(NumberSchema, v.minValue(0));
+const PositiveQuantitySchema = v.pipe(NumberSchema, v.minValue(Number.EPSILON));
 
 const MaterialReceiptDocumentItemDTOSchema = v.object({
 	id: IdSchema,
@@ -93,6 +96,51 @@ const MaterialTransferDocumentDTOSchema = v.object({
 	items: v.array(MaterialTransferDocumentItemDTOSchema),
 });
 
+const MaterialRequestDocumentItemDTOSchema = v.object({
+	id: IdSchema,
+	line_num: IdSchema,
+	material_id: IdSchema,
+	measure_unit_id: IdSchema,
+	quant: PositiveQuantitySchema,
+	supplier_id: v.nullable(IdSchema),
+	required_date: v.nullable(DateStringSchema),
+	order_importance_id: IdSchema,
+	status_id: IdSchema,
+	material: AttrsSchema,
+	measure_unit: AttrsSchema,
+	supplier: v.nullable(AttrsSchema),
+	order_importance: AttrsSchema,
+	status: AttrsSchema,
+});
+
+const MaterialRequestDocumentDTOSchema = v.object({
+	id: IdSchema,
+	version: VersionSchema,
+	date: DateStringSchema,
+	construction_site_id: IdSchema,
+	construction_manager_id: IdSchema,
+	comment: v.nullable(TextSchema),
+	construction_site: AttrsSchema,
+	construction_manager: AttrsSchema,
+	items: v.array(MaterialRequestDocumentItemDTOSchema),
+});
+
+const dateOnlyFromDTO = (value: string | null): Date | null => {
+	if (value === null) {
+		return null;
+	}
+
+	const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+	if (match === null) {
+		return null;
+	}
+
+	const year = Number(match[1]);
+	const month = Number(match[2]);
+	const day = Number(match[3]);
+	return new Date(year, month - 1, day);
+};
+
 export const materialReceiptDocumentFromDTO = (
 	dto: MaterialReceiptDocumentDTO | unknown,
 ): MaterialReceiptDocument => {
@@ -134,6 +182,22 @@ export const materialTransferDocumentFromDTO = (
 		items: parsed.items.map((item) => ({
 			...item,
 			material_transfer_id: parsed.id,
+		})),
+	};
+};
+
+export const materialRequestDocumentFromDTO = (
+	dto: MaterialRequestDocumentDTO | unknown,
+): MaterialRequestDocument => {
+	const parsed = v.parse(MaterialRequestDocumentDTOSchema, dto);
+
+	return {
+		...parsed,
+		date: new Date(parsed.date),
+		items: parsed.items.map((item) => ({
+			...item,
+			material_request_id: parsed.id,
+			required_date: dateOnlyFromDTO(item.required_date),
 		})),
 	};
 };

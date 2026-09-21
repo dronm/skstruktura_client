@@ -6,10 +6,12 @@ const props = withDefaults(
 		inputId: string;
 		invalid?: boolean;
 		required?: boolean;
+		disabled?: boolean;
 	}>(),
 	{
 		invalid: false,
 		required: false,
+		disabled: false,
 	},
 );
 
@@ -93,6 +95,7 @@ const onBlur = (event: { value: string }): void => {
 		v-model="model"
 		:invalid="props.invalid"
 		:required="props.required"
+		:disabled="props.disabled"
 		dateFormat="dd.mm.yy"
 		showIcon
 		showTime

@@ -2,6 +2,8 @@ import type { MaterialConsumptionItem } from "@/types/materialConsumptionItem.ge
 import type {
 	MaterialConsumptionDocument,
 	MaterialConsumptionDocumentForm,
+	MaterialRequestDocument,
+	MaterialRequestDocumentForm,
 	MaterialReceiptDocument,
 	MaterialReceiptDocumentForm,
 	MaterialTransferDocument,
@@ -140,6 +142,61 @@ export const copyMaterialTransferDocument = (
 			id: -(index + 1),
 			line_num: index + 1,
 			material_transfer_id: 0,
+		}),
+	),
+});
+
+export const createMaterialRequestDocumentForm = (
+	constructionManagerID = 0,
+): MaterialRequestDocumentForm => ({
+	id: 0,
+	version: 0,
+	date: currentDocumentDateTime(),
+	construction_site_id: 0,
+	construction_manager_id: constructionManagerID,
+	comment: null,
+	items: [],
+});
+
+export const materialRequestDocumentToForm = (
+	document: MaterialRequestDocument,
+): MaterialRequestDocumentForm => ({
+	...document,
+	date: new Date(document.date),
+	items: document.items.map((item) => ({
+		...item,
+		required_date:
+			item.required_date === null
+				? null
+				: new Date(item.required_date),
+		supplier_id: normalizeNullableID(item.supplier_id),
+	})),
+});
+
+export const copyMaterialRequestDocument = (
+	document: MaterialRequestDocument,
+): MaterialRequestDocumentForm => ({
+	...materialRequestDocumentToForm(document),
+	id: 0,
+	version: 0,
+	items: document.items.map(
+		(item, index): MaterialRequestDocumentForm["items"][number] => ({
+			...item,
+			id: -(index + 1),
+			line_num: index + 1,
+			material_request_id: 0,
+			supplier_id: null,
+			supplier: null,
+			status_id: 1,
+			status: {
+				keys: { id: 1 },
+				descr: "Черновик",
+				dataType: "materialRequestStatuses",
+			},
+			required_date:
+				item.required_date === null
+					? null
+					: new Date(item.required_date),
 		}),
 	),
 });

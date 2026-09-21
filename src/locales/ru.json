@@ -123,6 +123,27 @@
 			"notGenerated": "Сначала сформируйте отчёт"
 		}
 	},
+	"MaterialBalance": {
+		"title": "Остатки материалов",
+		"sheetName": "Остатки материалов",
+		"generatedAt": "Сформирован",
+		"notGenerated": "Выберите объект строительства и сформируйте отчёт",
+		"empty": "На выбранном объекте остатков материалов нет",
+		"filters": {
+			"constructionSite": "Объект строительства",
+			"selectConstructionSite": "Выберите объект строительства",
+			"noConstructionSites": "Нет доступных объектов"
+		},
+		"columns": {
+			"material": "Материал",
+			"measureUnit": "Ед. изм.",
+			"balance": "Остаток"
+		},
+		"errors": {
+			"constructionSiteRequired": "Выберите объект строительства",
+			"noAssignedConstructionSites": "Для текущего пользователя не назначены объекты строительства."
+		}
+	},
 	"validation": {
 		"required": "Поле обязательно для заполнения",
 		"maxLen": "Максимальная длина: {maxLen}",
@@ -160,6 +181,26 @@
 			"material_id": "Материал",
 			"measure_unit_id": "Ед. изм.",
 			"quant": "Количество"
+		}
+	},
+	"MaterialRequest": {
+		"actions": {
+			"submit": "Отправить",
+			"submitConfirmHeader": "Отправка заявки",
+			"submitConfirmMessage": "После отправки строки перейдут в статус «Отправлена». Продолжить?"
+		}
+	},
+	"MaterialRequestItem": {
+		"title": "Материалы",
+		"fields": {
+			"line_num": "№",
+			"material_id": "Материал",
+			"measure_unit_id": "Ед. изм.",
+			"quant": "Количество",
+			"supplier_id": "Поставщик",
+			"required_date": "Требуемая дата",
+			"order_importance_id": "Важность",
+			"status_id": "Статус"
 		}
 	},
 	"Supplier": {

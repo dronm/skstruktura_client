@@ -1,6 +1,7 @@
 import api from "@/api/http";
 import {
 	materialConsumptionDocumentFromDTO,
+	materialRequestDocumentFromDTO,
 	materialReceiptDocumentFromDTO,
 	materialTransferDocumentFromDTO,
 } from "@/schemas/materialDocuments";
@@ -10,6 +11,9 @@ import type {
 	MaterialConsumptionDocumentDTO,
 	MaterialConsumptionDocumentSave,
 	MaterialDocumentKey,
+	MaterialRequestDocument,
+	MaterialRequestDocumentDTO,
+	MaterialRequestDocumentSave,
 	MaterialReceiptDocument,
 	MaterialReceiptDocumentDTO,
 	MaterialReceiptDocumentSave,
@@ -27,12 +31,34 @@ export interface MaterialDocumentApi<TDocument, TSave> {
 	) => Promise<TDocument>;
 }
 
+export interface MaterialRequestDocumentApi
+	extends MaterialDocumentApi<
+		MaterialRequestDocument,
+		MaterialRequestDocumentSave
+	> {
+	submit: (
+		key: MaterialDocumentKey,
+		version: number,
+	) => Promise<MaterialRequestDocument>;
+}
+
 const documentPath = (basePath: string, key: MaterialDocumentKey): string => {
 	return `${basePath}/${encodeURIComponent(String(key.id))}`;
 };
 
 const existingItemID = (id: number | undefined): { id: number } | object => {
 	return typeof id === "number" && id > 0 ? { id } : {};
+};
+
+const dateOnlyValue = (value: Date | null): string | null => {
+	if (value === null) {
+		return null;
+	}
+
+	const year = value.getFullYear();
+	const month = String(value.getMonth() + 1).padStart(2, "0");
+	const day = String(value.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
 };
 
 const materialReceiptCreateBody = (document: MaterialReceiptDocumentSave) => ({
@@ -132,6 +158,42 @@ const materialTransferUpdateBody = (
 	})),
 });
 
+const materialRequestCreateBody = (
+	document: MaterialRequestDocumentSave,
+) => ({
+	date: document.date,
+	construction_site_id: document.construction_site_id,
+	construction_manager_id: document.construction_manager_id,
+	comment: document.comment,
+	items: document.items.map((item) => ({
+		material_id: item.material_id,
+		measure_unit_id: item.measure_unit_id,
+		quant: item.quant,
+		supplier_id: normalizeNullableID(item.supplier_id),
+		required_date: dateOnlyValue(item.required_date),
+		order_importance_id: item.order_importance_id,
+		status_id: item.status_id,
+	})),
+});
+
+const materialRequestUpdateBody = (
+	document: MaterialRequestDocumentSave,
+) => ({
+	id: document.id,
+	version: document.version,
+	...materialRequestCreateBody(document),
+	items: document.items.map((item) => ({
+		...existingItemID(item.id),
+		material_id: item.material_id,
+		measure_unit_id: item.measure_unit_id,
+		quant: item.quant,
+		supplier_id: normalizeNullableID(item.supplier_id),
+		required_date: dateOnlyValue(item.required_date),
+		order_importance_id: item.order_importance_id,
+		status_id: item.status_id,
+	})),
+});
+
 const materialReceiptBasePath = "/material-receipts";
 
 export const materialReceiptDocumentApi: MaterialDocumentApi<
@@ -213,5 +275,37 @@ export const materialTransferDocumentApi: MaterialDocumentApi<
 			materialTransferUpdateBody(document),
 		);
 		return materialTransferDocumentFromDTO(response);
+	},
+};
+
+const materialRequestBasePath = "/material-requests";
+
+export const materialRequestDocumentApi: MaterialRequestDocumentApi = {
+	detail: async (key) => {
+		const response = await api.get<MaterialRequestDocumentDTO>(
+			documentPath(materialRequestBasePath, key),
+		);
+		return materialRequestDocumentFromDTO(response);
+	},
+	create: async (document) => {
+		const response = await api.post<MaterialRequestDocumentDTO>(
+			materialRequestBasePath,
+			materialRequestCreateBody(document),
+		);
+		return materialRequestDocumentFromDTO(response);
+	},
+	update: async (key, document) => {
+		const response = await api.put<MaterialRequestDocumentDTO>(
+			documentPath(materialRequestBasePath, key),
+			materialRequestUpdateBody(document),
+		);
+		return materialRequestDocumentFromDTO(response);
+	},
+	submit: async (key, version) => {
+		const response = await api.post<MaterialRequestDocumentDTO>(
+			`${documentPath(materialRequestBasePath, key)}/submit`,
+			{ version },
+		);
+		return materialRequestDocumentFromDTO(response);
 	},
 };
