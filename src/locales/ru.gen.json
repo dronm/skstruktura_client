@@ -118,6 +118,7 @@
 	"MaterialStatus": {
 		"title": "Статусы материалов",
 		"fields": {
+			"construction_site_id": "Объект строительства",
 			"created_at": "Дата",
 			"id": "ID",
 			"is_active": "Активна",

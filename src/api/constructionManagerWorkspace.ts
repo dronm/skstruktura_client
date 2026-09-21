@@ -11,6 +11,10 @@ import {
 } from "@/schemas/materialBalance";
 import { materialConsumptionListFromDTO } from "@/schemas/materialConsumptionList.gen";
 import {
+	constructionManagerMaterialStatusCurrentFromDTO,
+	constructionManagerMaterialStatusHistoryFromDTO,
+} from "@/schemas/constructionManagerMaterialStatus";
+import {
 	materialConsumptionDocumentFromDTO,
 	materialTransferDocumentFromDTO,
 } from "@/schemas/materialDocuments";
@@ -20,6 +24,13 @@ import type {
 	MaterialBalanceConstructionSite,
 	MaterialBalanceResponse,
 } from "@/types/materialBalance";
+import type {
+	ConstructionManagerMaterialStatusChange,
+	ConstructionManagerMaterialStatusCurrent,
+	ConstructionManagerMaterialStatusCurrentDTO,
+	ConstructionManagerMaterialStatusHistory,
+	ConstructionManagerMaterialStatusHistoryDTO,
+} from "@/types/constructionManagerMaterialStatus";
 import type {
 	MaterialConsumptionList,
 	MaterialConsumptionListDTO,
@@ -210,6 +221,70 @@ export const constructionManagerWorkspaceApi = {
 		};
 	},
 
+	materialStatusesCurrent: async (
+		constructionSiteID: number,
+		materialTypeID: number | null = null,
+		params: CollectionParams = {},
+	): Promise<
+		CollectionResponse<ConstructionManagerMaterialStatusCurrent>
+	> => {
+		const query: Record<string, string> = {
+			construction_site_id: String(constructionSiteID),
+			from: String(params.from ?? 0),
+			count: String(params.count ?? 30),
+		};
+		if (materialTypeID !== null) {
+			query.material_type_id = String(materialTypeID);
+		}
+
+		const response =
+			normalizeCollectionResponse<ConstructionManagerMaterialStatusCurrentDTO>(
+				await api.get<unknown>(
+					`${basePath}/material-statuses/current`,
+					query,
+				),
+			);
+
+		return {
+			rows: response.rows.map(
+				constructionManagerMaterialStatusCurrentFromDTO,
+			),
+			agg: response.agg,
+		};
+	},
+
+	materialStatusHistory: async (
+		constructionSiteID: number,
+		materialTypeID: number | null = null,
+		params: CollectionParams = {},
+	): Promise<
+		CollectionResponse<ConstructionManagerMaterialStatusHistory>
+	> => {
+		const query: Record<string, string> = {
+			construction_site_id: String(constructionSiteID),
+			from: String(params.from ?? 0),
+			count: String(params.count ?? 30),
+		};
+		if (materialTypeID !== null) {
+			query.material_type_id = String(materialTypeID);
+		}
+
+		const response =
+			normalizeCollectionResponse<ConstructionManagerMaterialStatusHistoryDTO>(
+				await api.get<unknown>(
+					`${basePath}/material-statuses/history`,
+					query,
+				),
+			);
+
+		return {
+			rows: response.rows.map(
+				constructionManagerMaterialStatusHistoryFromDTO,
+			),
+			agg: response.agg,
+		};
+	},
+
 	createMaterialConsumption: async (
 		document: MaterialConsumptionDocumentSave,
 	): Promise<MaterialConsumptionDocument> => {
@@ -230,5 +305,19 @@ export const constructionManagerWorkspaceApi = {
 		);
 
 		return materialTransferDocumentFromDTO(response);
+	},
+
+	createMaterialStatus: async (
+		change: ConstructionManagerMaterialStatusChange,
+	): Promise<ConstructionManagerMaterialStatusHistory> => {
+		const response =
+			await api.post<ConstructionManagerMaterialStatusHistoryDTO>(
+				`${basePath}/material-statuses`,
+				change,
+			);
+
+		return constructionManagerMaterialStatusHistoryFromDTO(
+			response,
+		);
 	},
 };

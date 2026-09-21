@@ -203,7 +203,8 @@
 			"balance": "Остатки",
 			"request": "Заявка",
 			"consumption": "Списание",
-			"transfer": "Перемещение"
+			"transfer": "Перемещение",
+			"status": "Статусы"
 		},
 		"grid": {
 			"quantity": "Кол-во",
@@ -267,6 +268,33 @@
 			},
 			"materialType": "Тип материала",
 			"allMaterialTypes": "Все типы материалов"
+		},
+		"status": {
+			"tabs": {
+				"current": "Текущие статусы",
+				"history": "История"
+			},
+			"materialType": "Тип материала",
+			"allMaterialTypes": "Все типы материалов",
+			"empty": "Материалы для учёта статуса не найдены.",
+			"retry": "Повторить",
+			"refreshData": "Обновить данные",
+			"materialTypesError": "Не удалось загрузить полный список типов материалов",
+			"materialUnavailable": "Материал больше не доступен на выбранном объекте строительства.",
+			"changeAriaLabel": "Материал «{material}»: текущий статус «{current}». Изменить на «{target}»",
+			"updated": "Статус материала «{material}» изменён на «{status}».",
+			"columns": {
+				"date": "Дата",
+				"material": "Материал",
+				"status": "Статус"
+			},
+			"dialog": {
+				"title": "Изменение статуса материала",
+				"currentStatus": "Текущий статус",
+				"newStatus": "Новый статус",
+				"date": "Дата изменения",
+				"submit": "Изменить статус"
+			}
 		}
 	},
 	"MaterialRequestItem": {
