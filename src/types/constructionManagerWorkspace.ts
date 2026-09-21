@@ -41,6 +41,16 @@ export interface MaterialConsumptionWorkspaceDraft {
 	lines: Record<number, MaterialConsumptionWorkbenchLine>;
 }
 
+export interface MaterialTransferWorkbenchLine {
+	quant: number | null;
+}
+
+export interface MaterialTransferWorkspaceDraft {
+	destinationConstructionSiteID: number | null;
+	comment: string;
+	lines: Record<number, MaterialTransferWorkbenchLine>;
+}
+
 export const materialBalanceRowToWorkbenchRow = (
 	row: MaterialBalanceRow,
 ): MaterialWorkbenchRow => ({

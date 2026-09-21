@@ -7,17 +7,20 @@ import Select from "primevue/select";
 import MaterialBalancePanel from "@/components/constructionManager/MaterialBalancePanel.vue";
 import MaterialConsumptionPanel from "@/components/constructionManager/MaterialConsumptionPanel.vue";
 import MaterialRequestPanel from "@/components/constructionManager/MaterialRequestPanel.vue";
+import MaterialTransferPanel from "@/components/constructionManager/MaterialTransferPanel.vue";
 import { provideConstructionManagerSiteContext } from "@/composables/useConstructionManagerSiteContext";
 
-type WorkspaceTab = "balance" | "request" | "consumption";
+type WorkspaceTab = "balance" | "request" | "consumption" | "transfer";
 
 const { t } = useI18n();
 const siteContext = provideConstructionManagerSiteContext();
 const activeTab = ref<WorkspaceTab>("balance");
 const requestVisited = ref(false);
 const consumptionVisited = ref(false);
+const transferVisited = ref(false);
 const requestSubmitting = ref(false);
 const consumptionSubmitting = ref(false);
+const transferSubmitting = ref(false);
 const inventoryRevision = ref(0);
 
 const selectTab = (tab: WorkspaceTab): void => {
@@ -26,11 +29,17 @@ const selectTab = (tab: WorkspaceTab): void => {
 		requestVisited.value = true;
 	} else if (tab === "consumption") {
 		consumptionVisited.value = true;
+	} else if (tab === "transfer") {
+		transferVisited.value = true;
 	}
 };
 
 const selectConstructionSite = (constructionSiteID: number | null): void => {
-	if (!requestSubmitting.value && !consumptionSubmitting.value) {
+	if (
+		!requestSubmitting.value &&
+		!consumptionSubmitting.value &&
+		!transferSubmitting.value
+	) {
 		siteContext.select(constructionSiteID);
 	}
 };
@@ -105,6 +114,7 @@ onMounted(() => {
 								.value ||
 							requestSubmitting ||
 							consumptionSubmitting ||
+							transferSubmitting ||
 							siteContext
 								.constructionSites
 								.value
@@ -209,6 +219,27 @@ onMounted(() => {
 					)
 				}}
 			</button>
+			<button
+				type="button"
+				class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+				:class="
+					activeTab === 'transfer'
+						? 'bg-cyan-700 text-white'
+						: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+				"
+				:aria-selected="activeTab === 'transfer'"
+				@click="selectTab('transfer')"
+			>
+				<i
+					class="pi pi-arrow-right-arrow-left mr-2"
+					aria-hidden="true"
+				/>
+				{{
+					t(
+						"ConstructionManagerWorkspace.tabs.transfer",
+					)
+				}}
+			</button>
 		</nav>
 
 		<section
@@ -256,9 +287,21 @@ onMounted(() => {
 					siteContext.selectedConstructionSite
 						.value
 				"
+				:inventoryRevision="inventoryRevision"
 				@submitting-change="
 					consumptionSubmitting = $event
 				"
+				@inventory-updated="refreshInventory"
+			/>
+			<MaterialTransferPanel
+				v-if="transferVisited"
+				v-show="activeTab === 'transfer'"
+				:site="
+					siteContext.selectedConstructionSite
+						.value
+				"
+				:inventoryRevision="inventoryRevision"
+				@submitting-change="transferSubmitting = $event"
 				@inventory-updated="refreshInventory"
 			/>
 		</section>

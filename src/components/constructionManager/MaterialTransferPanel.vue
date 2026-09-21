@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import ConfirmDialog from "primevue/confirmdialog";
@@ -12,21 +12,21 @@ import { errorText } from "@katren/vue-collection-lib";
 
 import { constructionManagerWorkspaceApi } from "@/api/constructionManagerWorkspace";
 import GroupedMaterialGrid from "@/components/constructionManager/GroupedMaterialGrid.vue";
-import MaterialConsumptionHistoryGrid from "@/components/constructionManager/MaterialConsumptionHistoryGrid.vue";
+import MaterialTransferHistoryGrid from "@/components/constructionManager/MaterialTransferHistoryGrid.vue";
 import MaterialWorkbenchSummary from "@/components/constructionManager/MaterialWorkbenchSummary.vue";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type {
-	MaterialConsumptionWorkbenchLine,
-	MaterialConsumptionWorkspaceDraft,
+	MaterialTransferWorkbenchLine,
+	MaterialTransferWorkspaceDraft,
 	MaterialWorkbenchRow,
 } from "@/types/constructionManagerWorkspace";
 import { materialBalanceRowToWorkbenchRow } from "@/types/constructionManagerWorkspace";
 import type { MaterialBalanceConstructionSite } from "@/types/materialBalance";
-import type { MaterialConsumptionDocumentSave } from "@/types/materialDocuments";
+import type { MaterialTransferDocumentSave } from "@/types/materialDocuments";
 
-interface SelectedConsumptionLine {
+interface SelectedTransferLine {
 	row: MaterialWorkbenchRow;
-	line: MaterialConsumptionWorkbenchLine;
+	line: MaterialTransferWorkbenchLine;
 }
 
 interface MaterialTypeFilterOption {
@@ -34,7 +34,11 @@ interface MaterialTypeFilterOption {
 	name: string;
 }
 
-type ConsumptionPanelTab = "new" | "history";
+interface TransferDestinationOption extends MaterialBalanceConstructionSite {
+	disabled: boolean;
+}
+
+type TransferPanelTab = "new" | "history";
 
 const props = defineProps<{
 	site: MaterialBalanceConstructionSite | null;
@@ -46,25 +50,29 @@ const emit = defineEmits<{
 	"inventory-updated": [];
 }>();
 
-const confirmGroup = "construction-manager-consumption";
+const confirmGroup = "construction-manager-transfer";
 const { t } = useI18n();
 const confirm = useConfirm();
 const authStore = useAuthStore();
-const drafts = reactive(new Map<number, MaterialConsumptionWorkspaceDraft>());
+const drafts = reactive(new Map<number, MaterialTransferWorkspaceDraft>());
 const catalogRows = ref<MaterialWorkbenchRow[]>([]);
-const currentDraft = ref<MaterialConsumptionWorkspaceDraft | null>(null);
+const destinations = ref<MaterialBalanceConstructionSite[]>([]);
+const currentDraft = ref<MaterialTransferWorkspaceDraft | null>(null);
 const catalogLoading = ref(false);
+const destinationsLoading = ref(false);
 const submitting = ref(false);
 const catalogError = ref("");
-const consumptionError = ref("");
-const submittedConsumptionID = ref<number | null>(null);
-const activeTab = ref<ConsumptionPanelTab>("new");
+const destinationsError = ref("");
+const transferError = ref("");
+const submittedTransferID = ref<number | null>(null);
+const activeTab = ref<TransferPanelTab>("new");
 const selectedMaterialTypeID = ref<number | null>(null);
 let catalogLoadSequence = 0;
 let watchedSiteID: number | null | undefined;
 let ignoredInventoryRevision: number | null = null;
 
-const createDraft = (): MaterialConsumptionWorkspaceDraft => ({
+const createDraft = (): MaterialTransferWorkspaceDraft => ({
+	destinationConstructionSiteID: null,
 	comment: "",
 	lines: {},
 });
@@ -80,7 +88,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> => {
 const draftStorageKey = (constructionSiteID: number): string | null => {
 	const userID = authStore.user?.id ?? 0;
 	return userID > 0
-		? `construction-manager-consumption-draft:${userID}:${constructionSiteID}`
+		? `construction-manager-transfer-draft:${userID}:${constructionSiteID}`
 		: null;
 };
 
@@ -93,13 +101,13 @@ const removeStoredDraft = (constructionSiteID: number): void => {
 	try {
 		localStorage.removeItem(key);
 	} catch {
-		// Storage availability must not prevent consumption processing.
+		// Storage availability must not prevent transfer processing.
 	}
 };
 
 const readStoredDraft = (
 	constructionSiteID: number,
-): MaterialConsumptionWorkspaceDraft | null => {
+): MaterialTransferWorkspaceDraft | null => {
 	const key = draftStorageKey(constructionSiteID);
 	if (key === null) {
 		return null;
@@ -113,8 +121,7 @@ const readStoredDraft = (
 			return null;
 		}
 
-		const lines: Record<number, MaterialConsumptionWorkbenchLine> =
-			{};
+		const lines: Record<number, MaterialTransferWorkbenchLine> = {};
 		if (isRecord(value.lines)) {
 			for (const [materialKey, storedLine] of Object.entries(
 				value.lines,
@@ -140,7 +147,16 @@ const readStoredDraft = (
 			}
 		}
 
+		const destinationConstructionSiteID =
+			typeof value.destinationConstructionSiteID ===
+				"number" &&
+			Number.isInteger(value.destinationConstructionSiteID) &&
+			value.destinationConstructionSiteID > 0
+				? value.destinationConstructionSiteID
+				: null;
+
 		return {
+			destinationConstructionSiteID,
 			comment:
 				typeof value.comment === "string"
 					? value.comment
@@ -155,7 +171,7 @@ const readStoredDraft = (
 
 const persistDraft = (
 	constructionSiteID: number,
-	draft: MaterialConsumptionWorkspaceDraft,
+	draft: MaterialTransferWorkspaceDraft,
 ): void => {
 	const key = draftStorageKey(constructionSiteID);
 	if (key === null) {
@@ -163,8 +179,7 @@ const persistDraft = (
 	}
 
 	try {
-		const lines: Record<number, MaterialConsumptionWorkbenchLine> =
-			{};
+		const lines: Record<number, MaterialTransferWorkbenchLine> = {};
 		for (const [materialKey, line] of Object.entries(draft.lines)) {
 			if ((line.quant ?? 0) > 0) {
 				lines[Number(materialKey)] = line;
@@ -174,12 +189,14 @@ const persistDraft = (
 		localStorage.setItem(
 			key,
 			JSON.stringify({
+				destinationConstructionSiteID:
+					draft.destinationConstructionSiteID,
 				comment: draft.comment,
 				lines,
 			}),
 		);
 	} catch {
-		// Storage availability must not prevent consumption processing.
+		// Storage availability must not prevent transfer processing.
 	}
 };
 
@@ -192,7 +209,7 @@ const persistCurrentDraft = (): void => {
 
 const ensureDraft = (
 	constructionSiteID: number,
-): MaterialConsumptionWorkspaceDraft => {
+): MaterialTransferWorkspaceDraft => {
 	let draft = drafts.get(constructionSiteID);
 	if (draft === undefined) {
 		draft = readStoredDraft(constructionSiteID) ?? createDraft();
@@ -201,7 +218,7 @@ const ensureDraft = (
 	return draft;
 };
 
-const ensureLine = (materialID: number): MaterialConsumptionWorkbenchLine => {
+const ensureLine = (materialID: number): MaterialTransferWorkbenchLine => {
 	const draft = currentDraft.value;
 	if (draft === null) {
 		return { quant: null };
@@ -214,6 +231,24 @@ const ensureLine = (materialID: number): MaterialConsumptionWorkbenchLine => {
 	}
 	return line;
 };
+
+const destinationOptions = computed<TransferDestinationOption[]>(() => {
+	const sourceConstructionSiteID = props.site?.id ?? null;
+	return destinations.value.map((site) => ({
+		...site,
+		disabled: site.id === sourceConstructionSiteID,
+	}));
+});
+
+const selectedDestination = computed<
+	MaterialBalanceConstructionSite | undefined
+>(() => {
+	const destinationConstructionSiteID =
+		currentDraft.value?.destinationConstructionSiteID ?? null;
+	return destinations.value.find(
+		(site) => site.id === destinationConstructionSiteID,
+	);
+});
 
 const materialTypeOptions = computed<MaterialTypeFilterOption[]>(() => {
 	const options = new Map<number, MaterialTypeFilterOption>();
@@ -238,7 +273,7 @@ const filteredCatalogRows = computed<MaterialWorkbenchRow[]>(() => {
 			);
 });
 
-const selectedLines = computed<SelectedConsumptionLine[]>(() => {
+const selectedLines = computed<SelectedTransferLine[]>(() => {
 	const draft = currentDraft.value;
 	if (draft === null) {
 		return [];
@@ -254,11 +289,17 @@ const selectedLines = computed<SelectedConsumptionLine[]>(() => {
 });
 
 const canSubmit = computed(() => {
+	const sourceConstructionSiteID = props.site?.id ?? null;
+	const destinationConstructionSiteID =
+		selectedDestination.value?.id ?? null;
 	return (
 		!submitting.value &&
-		props.site !== null &&
+		sourceConstructionSiteID !== null &&
+		destinationConstructionSiteID !== null &&
+		destinationConstructionSiteID !== sourceConstructionSiteID &&
 		selectedLines.value.length > 0 &&
-		!catalogLoading.value
+		!catalogLoading.value &&
+		!destinationsLoading.value
 	);
 });
 
@@ -271,6 +312,26 @@ const formatNumber = (value: number): string => {
 	return numberFormatter.format(value);
 };
 
+const clearSubmissionFeedback = (): void => {
+	transferError.value = "";
+	submittedTransferID.value = null;
+};
+
+const setDestination = (value: number | null): void => {
+	if (currentDraft.value === null) {
+		return;
+	}
+
+	currentDraft.value.destinationConstructionSiteID =
+		typeof value === "number" &&
+		Number.isInteger(value) &&
+		value > 0
+			? value
+			: null;
+	persistCurrentDraft();
+	clearSubmissionFeedback();
+};
+
 const setQuantity = (materialID: number, value: number | null): void => {
 	const normalized =
 		typeof value === "number" && Number.isFinite(value) && value > 0
@@ -278,20 +339,50 @@ const setQuantity = (materialID: number, value: number | null): void => {
 			: null;
 	ensureLine(materialID).quant = normalized;
 	persistCurrentDraft();
-	consumptionError.value = "";
-	submittedConsumptionID.value = null;
+	clearSubmissionFeedback();
 };
 
 const setComment = (value: string | undefined): void => {
 	if (currentDraft.value !== null) {
 		currentDraft.value.comment = value ?? "";
 		persistCurrentDraft();
+		clearSubmissionFeedback();
 	}
 };
 
-const selectTab = (tab: ConsumptionPanelTab): void => {
+const selectTab = (tab: TransferPanelTab): void => {
 	if (!submitting.value) {
 		activeTab.value = tab;
+	}
+};
+
+const loadDestinations = async (): Promise<void> => {
+	destinationsLoading.value = true;
+	destinationsError.value = "";
+	try {
+		destinations.value =
+			await constructionManagerWorkspaceApi.transferDestinations();
+
+		const destinationConstructionSiteID =
+			currentDraft.value?.destinationConstructionSiteID ??
+			null;
+		if (
+			destinationConstructionSiteID !== null &&
+			!destinations.value.some(
+				(site) =>
+					site.id ===
+					destinationConstructionSiteID,
+			)
+		) {
+			currentDraft.value!.destinationConstructionSiteID =
+				null;
+			persistCurrentDraft();
+		}
+	} catch (caught: unknown) {
+		destinations.value = [];
+		destinationsError.value = errorText(caught);
+	} finally {
+		destinationsLoading.value = false;
 	}
 };
 
@@ -304,8 +395,7 @@ const loadCatalog = async (
 	selectedMaterialTypeID.value = null;
 	catalogError.value = "";
 	if (resetSubmissionFeedback) {
-		consumptionError.value = "";
-		submittedConsumptionID.value = null;
+		clearSubmissionFeedback();
 	}
 
 	if (constructionSiteID === null) {
@@ -339,10 +429,11 @@ const loadCatalog = async (
 	}
 };
 
-const createConsumptionModel = (): MaterialConsumptionDocumentSave | null => {
+const createTransferModel = (): MaterialTransferDocumentSave | null => {
 	const site = props.site;
+	const destination = selectedDestination.value;
 	const draft = currentDraft.value;
-	if (site === null || draft === null) {
+	if (site === null || destination === undefined || draft === null) {
 		return null;
 	}
 
@@ -350,7 +441,8 @@ const createConsumptionModel = (): MaterialConsumptionDocumentSave | null => {
 		id: 0,
 		version: 0,
 		date: new Date(),
-		construction_site_id: site.id,
+		source_construction_site_id: site.id,
+		destination_construction_site_id: destination.id,
 		comment: draft.comment.trim() || null,
 		items: selectedLines.value.map(({ row, line }) => ({
 			material_id: row.materialID,
@@ -360,10 +452,10 @@ const createConsumptionModel = (): MaterialConsumptionDocumentSave | null => {
 	};
 };
 
-const submitConsumption = async (): Promise<void> => {
+const submitTransfer = async (): Promise<void> => {
 	const site = props.site;
 	const draft = currentDraft.value;
-	const model = createConsumptionModel();
+	const model = createTransferModel();
 	if (
 		site === null ||
 		draft === null ||
@@ -375,22 +467,23 @@ const submitConsumption = async (): Promise<void> => {
 
 	submitting.value = true;
 	emit("submitting-change", true);
-	consumptionError.value = "";
-	submittedConsumptionID.value = null;
+	transferError.value = "";
+	submittedTransferID.value = null;
 	try {
 		const created =
-			await constructionManagerWorkspaceApi.createMaterialConsumption(
+			await constructionManagerWorkspaceApi.createMaterialTransfer(
 				model,
 			);
+		draft.destinationConstructionSiteID = null;
 		draft.comment = "";
 		draft.lines = {};
 		removeStoredDraft(site.id);
 		ignoredInventoryRevision = (props.inventoryRevision ?? 0) + 1;
 		emit("inventory-updated");
 		await loadCatalog(site.id, false);
-		submittedConsumptionID.value = created.id;
+		submittedTransferID.value = created.id;
 	} catch (caught: unknown) {
-		consumptionError.value = errorText(caught);
+		transferError.value = errorText(caught);
 	} finally {
 		submitting.value = false;
 		emit("submitting-change", false);
@@ -398,25 +491,25 @@ const submitConsumption = async (): Promise<void> => {
 };
 
 const requestSubmit = (): void => {
-	if (!canSubmit.value) {
+	const destination = selectedDestination.value;
+	if (!canSubmit.value || destination === undefined) {
 		return;
 	}
 
 	confirm.require({
 		group: confirmGroup,
 		header: t(
-			"ConstructionManagerWorkspace.consumption.confirmHeader",
+			"ConstructionManagerWorkspace.transfer.confirmHeader",
 		),
 		message: t(
-			"ConstructionManagerWorkspace.consumption.confirmMessage",
+			"ConstructionManagerWorkspace.transfer.confirmMessage",
+			{ destination: destination.name },
 		),
 		icon: "pi pi-exclamation-triangle",
-		acceptLabel: t(
-			"ConstructionManagerWorkspace.consumption.submit",
-		),
+		acceptLabel: t("ConstructionManagerWorkspace.transfer.submit"),
 		rejectLabel: t("Grid.commands.cancel"),
 		accept: () => {
-			void submitConsumption();
+			void submitTransfer();
 		},
 	});
 };
@@ -441,6 +534,10 @@ watch(
 	},
 	{ immediate: true },
 );
+
+onMounted(() => {
+	void loadDestinations();
+});
 </script>
 
 <template>
@@ -451,9 +548,7 @@ watch(
 			class="mb-4 flex gap-1 border-b border-slate-200"
 			role="tablist"
 			:aria-label="
-				t(
-					'ConstructionManagerWorkspace.tabs.consumption',
-				)
+				t('ConstructionManagerWorkspace.tabs.transfer')
 			"
 		>
 			<button
@@ -471,7 +566,7 @@ watch(
 			>
 				{{
 					t(
-						"ConstructionManagerWorkspace.consumption.tabs.new",
+						"ConstructionManagerWorkspace.transfer.tabs.new",
 					)
 				}}
 			</button>
@@ -490,7 +585,7 @@ watch(
 			>
 				{{
 					t(
-						"ConstructionManagerWorkspace.consumption.tabs.history",
+						"ConstructionManagerWorkspace.transfer.tabs.history",
 					)
 				}}
 			</button>
@@ -498,81 +593,142 @@ watch(
 
 		<div v-show="activeTab === 'new'">
 			<div
-				v-if="consumptionError"
+				v-if="transferError"
 				class="mb-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
 				role="alert"
 			>
-				{{ consumptionError }}
+				{{ transferError }}
 			</div>
 			<div
-				v-if="submittedConsumptionID !== null"
+				v-if="submittedTransferID !== null"
 				class="mb-3 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-800"
 				role="status"
 			>
 				{{
 					t(
-						"ConstructionManagerWorkspace.consumption.submitted",
-						{
-							id: submittedConsumptionID,
-						},
+						"ConstructionManagerWorkspace.transfer.submitted",
+						{ id: submittedTransferID },
 					)
 				}}
+			</div>
+
+			<div
+				class="mb-3 rounded-lg border border-slate-200 bg-white p-4"
+			>
+				<div
+					class="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(16rem,22rem)_minmax(0,1fr)]"
+				>
+					<div>
+						<label
+							for="constructionManagerTransferDestination"
+							class="mb-1 block text-sm font-medium text-slate-700"
+						>
+							{{
+								t(
+									"ConstructionManagerWorkspace.transfer.destination",
+								)
+							}}
+						</label>
+						<Select
+							inputId="constructionManagerTransferDestination"
+							:modelValue="
+								currentDraft?.destinationConstructionSiteID ??
+								null
+							"
+							:options="
+								destinationOptions
+							"
+							optionLabel="name"
+							optionValue="id"
+							optionDisabled="disabled"
+							:placeholder="
+								t(
+									'ConstructionManagerWorkspace.transfer.destinationPlaceholder',
+								)
+							"
+							:loading="
+								destinationsLoading
+							"
+							:disabled="
+								submitting ||
+								props.site ===
+									null
+							"
+							filter
+							showClear
+							class="w-full"
+							@update:modelValue="
+								setDestination
+							"
+						/>
+						<p
+							v-if="destinationsError"
+							class="mt-1 text-sm text-red-700"
+							role="alert"
+						>
+							{{ destinationsError }}
+						</p>
+					</div>
+
+					<div>
+						<label
+							for="constructionManagerTransferComment"
+							class="mb-1 block text-sm font-medium text-slate-700"
+						>
+							{{
+								t(
+									"ConstructionManagerWorkspace.transfer.comment",
+								)
+							}}
+						</label>
+						<Textarea
+							id="constructionManagerTransferComment"
+							:modelValue="
+								currentDraft?.comment ??
+								''
+							"
+							rows="2"
+							class="w-full"
+							:disabled="
+								submitting ||
+								props.site ===
+									null
+							"
+							@update:modelValue="
+								setComment
+							"
+						/>
+					</div>
+				</div>
 			</div>
 
 			<div
 				class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2"
 			>
 				<label
-					for="constructionManagerConsumptionMaterialType"
+					for="constructionManagerTransferMaterialType"
 					class="text-sm font-medium text-slate-700"
 				>
 					{{
 						t(
-							"ConstructionManagerWorkspace.consumption.materialType",
+							"ConstructionManagerWorkspace.transfer.materialType",
 						)
 					}}
 				</label>
 				<Select
-					inputId="constructionManagerConsumptionMaterialType"
+					inputId="constructionManagerTransferMaterialType"
 					v-model="selectedMaterialTypeID"
 					:options="materialTypeOptions"
 					optionLabel="name"
 					optionValue="id"
 					:placeholder="
 						t(
-							'ConstructionManagerWorkspace.consumption.allMaterialTypes',
+							'ConstructionManagerWorkspace.transfer.allMaterialTypes',
 						)
 					"
+					:disabled="submitting"
 					showClear
 					class="w-full sm:w-72"
-				/>
-			</div>
-
-			<div
-				class="mb-4 rounded-lg border border-slate-200 bg-white p-4"
-			>
-				<label
-					for="constructionManagerConsumptionComment"
-					class="mb-1 block text-sm font-medium text-slate-700"
-				>
-					{{
-						t(
-							"ConstructionManagerWorkspace.consumption.comment",
-						)
-					}}
-				</label>
-				<Textarea
-					id="constructionManagerConsumptionComment"
-					:modelValue="
-						currentDraft?.comment ?? ''
-					"
-					rows="2"
-					class="w-full"
-					:disabled="
-						submitting ||
-						props.site === null
-					"
-					@update:modelValue="setComment"
 				/>
 			</div>
 
@@ -585,7 +741,7 @@ watch(
 					:error="catalogError"
 					:emptyText="
 						t(
-							'ConstructionManagerWorkspace.consumption.empty',
+							'ConstructionManagerWorkspace.transfer.empty',
 						)
 					"
 					:extraColumnCount="1"
@@ -645,16 +801,16 @@ watch(
 				<MaterialWorkbenchSummary
 					:title="
 						t(
-							'ConstructionManagerWorkspace.consumption.summary',
+							'ConstructionManagerWorkspace.transfer.summary',
 						)
 					"
 					:count="selectedLines.length"
 					:actionLabel="
 						t(
-							'ConstructionManagerWorkspace.consumption.submit',
+							'ConstructionManagerWorkspace.transfer.submit',
 						)
 					"
-					actionIcon="pi pi-minus-circle"
+					actionIcon="pi pi-arrow-right-arrow-left"
 					:busy="submitting"
 					:disabled="!canSubmit"
 					@action="requestSubmit"
@@ -668,7 +824,7 @@ watch(
 					>
 						{{
 							t(
-								"ConstructionManagerWorkspace.consumption.summaryEmpty",
+								"ConstructionManagerWorkspace.transfer.summaryEmpty",
 							)
 						}}
 					</div>
@@ -704,11 +860,28 @@ watch(
 					</div>
 					<template #footer>
 						<p
+							v-if="
+								props.site !==
+									null &&
+								selectedDestination
+							"
+							class="mb-2 text-xs font-medium text-slate-700"
+						>
+							{{ props.site.name }}
+							<i
+								class="pi pi-arrow-right mx-1"
+								aria-hidden="true"
+							/>
+							{{
+								selectedDestination.name
+							}}
+						</p>
+						<p
 							class="text-xs text-slate-500"
 						>
 							{{
 								t(
-									"ConstructionManagerWorkspace.consumption.clearAfterSuccess",
+									"ConstructionManagerWorkspace.transfer.clearAfterSuccess",
 								)
 							}}
 						</p>
@@ -717,7 +890,7 @@ watch(
 			</div>
 		</div>
 
-		<MaterialConsumptionHistoryGrid
+		<MaterialTransferHistoryGrid
 			v-if="activeTab === 'history' && props.site !== null"
 			:key="props.site.id"
 			:constructionSiteID="props.site.id"

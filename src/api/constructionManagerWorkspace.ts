@@ -10,8 +10,12 @@ import {
 	materialBalanceResponseFromDTO,
 } from "@/schemas/materialBalance";
 import { materialConsumptionListFromDTO } from "@/schemas/materialConsumptionList.gen";
-import { materialConsumptionDocumentFromDTO } from "@/schemas/materialDocuments";
+import {
+	materialConsumptionDocumentFromDTO,
+	materialTransferDocumentFromDTO,
+} from "@/schemas/materialDocuments";
 import { materialRequestListFromDTO } from "@/schemas/materialRequestList.gen";
+import { materialTransferListFromDTO } from "@/schemas/materialTransferList.gen";
 import type {
 	MaterialBalanceConstructionSite,
 	MaterialBalanceResponse,
@@ -24,11 +28,18 @@ import type {
 	MaterialConsumptionDocument,
 	MaterialConsumptionDocumentDTO,
 	MaterialConsumptionDocumentSave,
+	MaterialTransferDocument,
+	MaterialTransferDocumentDTO,
+	MaterialTransferDocumentSave,
 } from "@/types/materialDocuments";
 import type {
 	MaterialRequestList,
 	MaterialRequestListDTO,
 } from "@/types/materialRequestList.gen";
+import type {
+	MaterialTransferList,
+	MaterialTransferListDTO,
+} from "@/types/materialTransferList.gen";
 
 const basePath = "/construction-manager";
 
@@ -37,6 +48,21 @@ const materialConsumptionCreateBody = (
 ) => ({
 	date: document.date,
 	construction_site_id: document.construction_site_id,
+	comment: document.comment,
+	items: document.items.map((item) => ({
+		material_id: item.material_id,
+		measure_unit_id: item.measure_unit_id,
+		quant: item.quant,
+	})),
+});
+
+const materialTransferCreateBody = (
+	document: MaterialTransferDocumentSave,
+) => ({
+	date: document.date,
+	source_construction_site_id: document.source_construction_site_id,
+	destination_construction_site_id:
+		document.destination_construction_site_id,
 	comment: document.comment,
 	items: document.items.map((item) => ({
 		material_id: item.material_id,
@@ -87,6 +113,16 @@ export const constructionManagerWorkspaceApi = {
 		MaterialBalanceConstructionSite[]
 	> => {
 		const response = await api.get<unknown>(`${basePath}/sites`);
+
+		return materialBalanceConstructionSitesFromDTO(response);
+	},
+
+	transferDestinations: async (): Promise<
+		MaterialBalanceConstructionSite[]
+	> => {
+		const response = await api.get<unknown>(
+			`${basePath}/transfer-destinations`,
+		);
 
 		return materialBalanceConstructionSitesFromDTO(response);
 	},
@@ -147,6 +183,33 @@ export const constructionManagerWorkspaceApi = {
 		};
 	},
 
+	materialTransfers: async (
+		constructionSiteID: number,
+		params: CollectionParams = {},
+	): Promise<CollectionResponse<MaterialTransferList>> => {
+		const response =
+			normalizeCollectionResponse<MaterialTransferListDTO>(
+				await api.get<unknown>(
+					`${basePath}/material-transfers`,
+					{
+						construction_site_id:
+							String(
+								constructionSiteID,
+							),
+						from: String(params.from ?? 0),
+						count: String(
+							params.count ?? 30,
+						),
+					},
+				),
+			);
+
+		return {
+			rows: response.rows.map(materialTransferListFromDTO),
+			agg: response.agg,
+		};
+	},
+
 	createMaterialConsumption: async (
 		document: MaterialConsumptionDocumentSave,
 	): Promise<MaterialConsumptionDocument> => {
@@ -156,5 +219,16 @@ export const constructionManagerWorkspaceApi = {
 		);
 
 		return materialConsumptionDocumentFromDTO(response);
+	},
+
+	createMaterialTransfer: async (
+		document: MaterialTransferDocumentSave,
+	): Promise<MaterialTransferDocument> => {
+		const response = await api.post<MaterialTransferDocumentDTO>(
+			`${basePath}/material-transfers`,
+			materialTransferCreateBody(document),
+		);
+
+		return materialTransferDocumentFromDTO(response);
 	},
 };
