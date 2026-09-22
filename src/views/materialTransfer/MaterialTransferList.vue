@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+
 import {
 	CollectionListPage,
 	defineCollection,
+	type GridCommand,
 } from "@katren/vue-collection-lib";
 
 import { materialTransferApi } from "@/api/materialTransfer.gen";
@@ -13,10 +16,36 @@ import type {
 } from "@/types/materialTransfer.gen";
 import type { MaterialTransferDocument } from "@/types/materialDocuments";
 import type { MaterialTransferList } from "@/types/materialTransferList.gen";
+import { openMaterialDocumentPrint } from "@/utils/materialDocumentPrint";
 import { formatReference } from "@/utils/reference";
 
 const formatDate = (value: unknown): string =>
 	value instanceof Date ? value.toLocaleString("ru-RU") : "";
+
+const router = useRouter();
+const commands: GridCommand<MaterialTransferList, MaterialTransferKey>[] = [
+	{ name: "create" },
+	{ name: "edit" },
+	{ name: "copy" },
+	{
+		name: "print",
+		labelKey: "Grid.commands.print",
+		icon: "pi pi-print",
+		enabled: (row) => row !== null,
+		handler: ({ row }) => {
+			if (row !== null) {
+				openMaterialDocumentPrint(
+					router,
+					"transfer",
+					row.id,
+				);
+			}
+		},
+	},
+	{ name: "delete" },
+	{ name: "search" },
+	{ name: "refresh" },
+];
 
 const collection = defineCollection<
 	MaterialTransferList,
@@ -66,6 +95,7 @@ const collection = defineCollection<
 			width: "18rem",
 		},
 	],
+	commands,
 	dataKey: "id",
 	getKey: (row) => ({ id: row.id }),
 	routes: {

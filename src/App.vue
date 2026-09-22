@@ -72,6 +72,7 @@ const collectionDirtyGuardEnabled = computed(() => {
 		/(Create|Edit)$/.test(route.name)
 	);
 });
+const printLayout = computed(() => route.meta.printLayout === true);
 
 const openUserProfile = async (): Promise<void> => {
 	await router.push({
@@ -140,10 +141,11 @@ watch(
 
 	<div
 		v-else
-		class="skstruktura-shell relative min-h-screen overflow-x-clip bg-slate-100 text-slate-900"
+		class="skstruktura-shell relative min-h-screen overflow-x-clip text-slate-900"
+		:class="printLayout ? 'bg-white' : 'bg-slate-100'"
 	>
 		<div
-			v-if="!referenceSelectionMode"
+			v-if="!referenceSelectionMode && !printLayout"
 			class="pointer-events-none fixed inset-0 overflow-hidden"
 			aria-hidden="true"
 		>
@@ -159,7 +161,11 @@ watch(
 		</div>
 
 		<HorizontalMainMenu
-			v-if="!referenceSelectionMode && roleWorkspace === null"
+			v-if="
+				!referenceSelectionMode &&
+				!printLayout &&
+				roleWorkspace === null
+			"
 			:menu="menu"
 			:user-name="userName"
 			:menu-error="menuError"
@@ -175,7 +181,11 @@ watch(
 		></HorizontalMainMenu>
 
 		<header
-			v-if="!referenceSelectionMode && roleWorkspace !== null"
+			v-if="
+				!referenceSelectionMode &&
+				!printLayout &&
+				roleWorkspace !== null
+			"
 			class="relative z-20 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur"
 		>
 			<div
@@ -249,17 +259,21 @@ watch(
 		<main
 			class="relative"
 			:class="
-				referenceSelectionMode
-					? 'min-h-screen'
-					: 'min-h-[calc(100vh-4rem)] pb-8'
+				printLayout
+					? 'min-h-screen bg-white'
+					: referenceSelectionMode
+						? 'min-h-screen'
+						: 'min-h-[calc(100vh-4rem)] pb-8'
 			"
 		>
 			<div
 				class="relative mx-auto w-full max-w-[1700px]"
 				:class="
-					referenceSelectionMode
-						? 'p-0'
-						: 'px-2 py-2 sm:px-4 sm:py-3 lg:px-5 lg:py-4'
+					printLayout
+						? 'max-w-none p-0'
+						: referenceSelectionMode
+							? 'p-0'
+							: 'px-2 py-2 sm:px-4 sm:py-3 lg:px-5 lg:py-4'
 				"
 			>
 				<CollectionDirtyGuard

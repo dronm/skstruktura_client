@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { CollectionEditPage } from "@katren/vue-collection-lib";
 
 import { materialConsumptionDocumentApi } from "@/api/materialDocuments";
+import DocumentPrintButton from "@/components/documents/DocumentPrintButton.vue";
 import ObjectHistoryButton from "@/components/history/ObjectHistoryButton.vue";
 import MaterialConsumptionForm from "@/components/materialConsumption/MaterialConsumptionForm.vue";
 import { useDocumentEditPage } from "@/composables/useDocumentEditPage";
@@ -55,8 +56,13 @@ const submit = async (
 	>
 		<div
 			v-if="edit.mode.value === 'edit'"
-			class="mb-4 flex justify-end"
+			class="mb-4 flex flex-wrap justify-end gap-2"
 		>
+			<DocumentPrintButton
+				kind="consumption"
+				:documentId="edit.key.value.id"
+				:disabled="edit.loading.value"
+			/>
 			<ObjectHistoryButton
 				object-type="material_consumptions"
 				:object-id="edit.key.value.id"

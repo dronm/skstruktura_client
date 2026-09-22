@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { CollectionEditPage } from "@katren/vue-collection-lib";
 
 import { materialTransferDocumentApi } from "@/api/materialDocuments";
+import DocumentPrintButton from "@/components/documents/DocumentPrintButton.vue";
 import ObjectHistoryButton from "@/components/history/ObjectHistoryButton.vue";
 import MaterialTransferForm from "@/components/materialTransfer/MaterialTransferForm.vue";
 import { useDocumentEditPage } from "@/composables/useDocumentEditPage";
@@ -53,8 +54,13 @@ const submit = async (model: MaterialTransferDocumentSave): Promise<void> => {
 	>
 		<div
 			v-if="edit.mode.value === 'edit'"
-			class="mb-4 flex justify-end"
+			class="mb-4 flex flex-wrap justify-end gap-2"
 		>
+			<DocumentPrintButton
+				kind="transfer"
+				:documentId="edit.key.value.id"
+				:disabled="edit.loading.value"
+			/>
 			<ObjectHistoryButton
 				object-type="material_transfers"
 				:object-id="edit.key.value.id"

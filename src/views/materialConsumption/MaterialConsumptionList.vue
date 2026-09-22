@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+
 import {
 	CollectionListPage,
 	defineCollection,
+	type GridCommand,
 } from "@katren/vue-collection-lib";
 
 import { materialConsumptionApi } from "@/api/materialConsumption.gen";
@@ -13,10 +16,37 @@ import type {
 } from "@/types/materialConsumption.gen";
 import type { MaterialConsumptionDocument } from "@/types/materialDocuments";
 import type { MaterialConsumptionList } from "@/types/materialConsumptionList.gen";
+import { openMaterialDocumentPrint } from "@/utils/materialDocumentPrint";
 import { formatReference } from "@/utils/reference";
 
 const formatDate = (value: unknown): string =>
 	value instanceof Date ? value.toLocaleString("ru-RU") : "";
+
+const router = useRouter();
+const commands: GridCommand<MaterialConsumptionList, MaterialConsumptionKey>[] =
+	[
+		{ name: "create" },
+		{ name: "edit" },
+		{ name: "copy" },
+		{
+			name: "print",
+			labelKey: "Grid.commands.print",
+			icon: "pi pi-print",
+			enabled: (row) => row !== null,
+			handler: ({ row }) => {
+				if (row !== null) {
+					openMaterialDocumentPrint(
+						router,
+						"consumption",
+						row.id,
+					);
+				}
+			},
+		},
+		{ name: "delete" },
+		{ name: "search" },
+		{ name: "refresh" },
+	];
 
 const collection = defineCollection<
 	MaterialConsumptionList,
@@ -58,6 +88,7 @@ const collection = defineCollection<
 			width: "18rem",
 		},
 	],
+	commands,
 	dataKey: "id",
 	getKey: (row) => ({ id: row.id }),
 	routes: {

@@ -24,6 +24,8 @@ const ConstructionManagerWorkspace = () =>
 	import("@/views/constructionManager/ConstructionManagerWorkspace.vue");
 const SupplyManagerWorkspace = () =>
 	import("@/views/supplyManager/SupplyManagerWorkspace.vue");
+const MaterialDocumentPrintPage = () =>
+	import("@/views/documents/MaterialDocumentPrintPage.vue");
 const DiadocDocumentList = () =>
 	import("@/views/diadoc/DiadocDocumentList.vue");
 const DiadocDocumentEditPage = () =>
@@ -91,6 +93,66 @@ const manualRouteManifest: RouteManifestEntry[] = [
 			descr: "Рабочее место снабженца",
 			section: "Формы",
 			icon: "pi pi-briefcase",
+			menu_available: false,
+		},
+	),
+	defineRoute(
+		{
+			path: "/material-transfers/:id/print",
+			name: "materialTransferPrint",
+			component: MaterialDocumentPrintPage,
+			props: (route) => ({
+				kind: "transfer",
+				documentId: Number(route.params.id),
+			}),
+			meta: {
+				printLayout: true,
+			},
+		},
+		{
+			descr: "Печатная форма перемещения материалов",
+			section: "Формы",
+			icon: null,
+			menu_available: false,
+		},
+	),
+	defineRoute(
+		{
+			path: "/material-consumptions/:id/print",
+			name: "materialConsumptionPrint",
+			component: MaterialDocumentPrintPage,
+			props: (route) => ({
+				kind: "consumption",
+				documentId: Number(route.params.id),
+			}),
+			meta: {
+				printLayout: true,
+			},
+		},
+		{
+			descr: "Печатная форма списания материалов",
+			section: "Формы",
+			icon: null,
+			menu_available: false,
+		},
+	),
+	defineRoute(
+		{
+			path: "/material-requests/:id/print",
+			name: "materialRequestPrint",
+			component: MaterialDocumentPrintPage,
+			props: (route) => ({
+				kind: "request",
+				documentId: Number(route.params.id),
+			}),
+			meta: {
+				printLayout: true,
+			},
+		},
+		{
+			descr: "Печатная форма заявки на материалы",
+			section: "Формы",
+			icon: null,
 			menu_available: false,
 		},
 	),

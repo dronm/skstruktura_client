@@ -8,6 +8,7 @@ import { useConfirm } from "primevue/useconfirm";
 import { CollectionEditPage } from "@katren/vue-collection-lib";
 
 import { materialRequestDocumentApi } from "@/api/materialDocuments";
+import DocumentPrintButton from "@/components/documents/DocumentPrintButton.vue";
 import ObjectHistoryButton from "@/components/history/ObjectHistoryButton.vue";
 import MaterialRequestForm from "@/components/materialRequest/MaterialRequestForm.vue";
 import { useDocumentEditPage } from "@/composables/useDocumentEditPage";
@@ -87,7 +88,8 @@ const canSubmitRequest = computed(() => {
 	const roleID = authStore.user?.role_id;
 	return (
 		edit.mode.value === "edit" &&
-		(roleID === "admin" || roleID === "construction_site_manager") &&
+		(roleID === "admin" ||
+			roleID === "construction_site_manager") &&
 		edit.model.value.items.length > 0 &&
 		edit.model.value.items.every(
 			(item) => item.status_id === DRAFT_STATUS_ID,
@@ -110,18 +112,22 @@ const submitRequest = (model: MaterialRequestDocumentSave): void => {
 			submittingRequest.value = true;
 			edit.errors.clear();
 			try {
-				const saved = await materialRequestDocumentApi.update(
-					edit.key.value,
-					model,
-				);
-				edit.model.value = materialRequestDocumentToForm(saved);
+				const saved =
+					await materialRequestDocumentApi.update(
+						edit.key.value,
+						model,
+					);
+				edit.model.value =
+					materialRequestDocumentToForm(saved);
 				const submitted =
 					await materialRequestDocumentApi.submit(
 						edit.key.value,
 						saved.version,
 					);
 				edit.model.value =
-					materialRequestDocumentToForm(submitted);
+					materialRequestDocumentToForm(
+						submitted,
+					);
 			} catch (caught: unknown) {
 				edit.errors.setFromError(caught);
 			} finally {
@@ -142,8 +148,13 @@ const submitRequest = (model: MaterialRequestDocumentSave): void => {
 
 		<div
 			v-if="edit.mode.value === 'edit'"
-			class="mb-4 flex justify-end"
+			class="mb-4 flex flex-wrap justify-end gap-2"
 		>
+			<DocumentPrintButton
+				kind="request"
+				:documentId="edit.key.value.id"
+				:disabled="edit.loading.value"
+			/>
 			<ObjectHistoryButton
 				object-type="material_requests"
 				:object-id="edit.key.value.id"

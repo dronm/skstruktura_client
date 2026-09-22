@@ -18,6 +18,7 @@ import { orderImportanceApi } from "@/api/orderImportance.gen";
 import { supplierApi } from "@/api/supplier.gen";
 import { supplyManagerWorkspaceApi } from "@/api/supplyManagerWorkspace";
 import DocumentDateTimePicker from "@/components/documents/DocumentDateTimePicker.vue";
+import DocumentPrintButton from "@/components/documents/DocumentPrintButton.vue";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { MaterialBalanceConstructionSite } from "@/types/materialBalance";
 import type { OrderImportance } from "@/types/orderImportance.gen";
@@ -1395,27 +1396,38 @@ watch(constructionSiteID, (value, previousValue) => {
 								>
 							</div>
 						</div>
-						<Button
-							:label="
-								t(
-									'SupplyManagerWorkspace.assignment.applyRequest',
-								)
-							"
-							icon="pi pi-copy"
-							severity="secondary"
-							outlined
-							size="small"
-							:disabled="
-								activeSupplierID ===
-									null ||
-								submitting
-							"
-							@click="
-								applyToRequest(
-									request,
-								)
-							"
-						/>
+						<div
+							class="ml-auto flex flex-wrap items-center justify-end gap-2"
+						>
+							<DocumentPrintButton
+								kind="request"
+								:documentId="
+									request.id
+								"
+								small
+							/>
+							<Button
+								:label="
+									t(
+										'SupplyManagerWorkspace.assignment.applyRequest',
+									)
+								"
+								icon="pi pi-copy"
+								severity="secondary"
+								outlined
+								size="small"
+								:disabled="
+									activeSupplierID ===
+										null ||
+									submitting
+								"
+								@click="
+									applyToRequest(
+										request,
+									)
+								"
+							/>
+						</div>
 					</header>
 
 					<div class="overflow-x-auto">

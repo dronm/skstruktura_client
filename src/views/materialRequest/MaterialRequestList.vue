@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+
 import {
 	CollectionListPage,
 	defineCollection,
@@ -15,6 +17,7 @@ import type {
 	MaterialRequestUpd,
 } from "@/types/materialRequest.gen";
 import type { MaterialRequestList } from "@/types/materialRequestList.gen";
+import { openMaterialDocumentPrint } from "@/utils/materialDocumentPrint";
 import { formatReference } from "@/utils/reference";
 
 const formatDate = (value: unknown): string => {
@@ -22,6 +25,7 @@ const formatDate = (value: unknown): string => {
 };
 
 const authStore = useAuthStore();
+const router = useRouter();
 const roleID = authStore.user?.role_id;
 const canManageRequests =
 	roleID === "admin" || roleID === "construction_site_manager";
@@ -30,6 +34,21 @@ const commands: GridCommand<MaterialRequestList, MaterialRequestKey>[] = [
 	...(canManageRequests ? ([{ name: "create" }] as const) : []),
 	...(canManageRequests ? ([{ name: "edit" }] as const) : []),
 	...(canManageRequests ? ([{ name: "copy" }] as const) : []),
+	{
+		name: "print",
+		labelKey: "Grid.commands.print",
+		icon: "pi pi-print",
+		enabled: (row) => row !== null,
+		handler: ({ row }) => {
+			if (row !== null) {
+				openMaterialDocumentPrint(
+					router,
+					"request",
+					row.id,
+				);
+			}
+		},
+	},
 	...(canManageRequests ? ([{ name: "delete" }] as const) : []),
 	{ name: "search" },
 	{ name: "refresh" },

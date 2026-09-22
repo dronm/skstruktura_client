@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+
 import {
 	CollectionGrid,
 	type CollectionGridApi,
@@ -10,11 +12,13 @@ import {
 import { constructionManagerWorkspaceApi } from "@/api/constructionManagerWorkspace";
 import type { MaterialRequestKey } from "@/types/materialRequest.gen";
 import type { MaterialRequestList } from "@/types/materialRequestList.gen";
+import { openMaterialDocumentPrint } from "@/utils/materialDocumentPrint";
 import { formatReference } from "@/utils/reference";
 
 const props = defineProps<{
 	constructionSiteID: number;
 }>();
+const router = useRouter();
 
 type ReadonlyPayload = Record<string, never>;
 
@@ -76,6 +80,21 @@ const columns: GridColumn<MaterialRequestList>[] = [
 ];
 
 const commands: GridCommand<MaterialRequestList, MaterialRequestKey>[] = [
+	{
+		name: "print",
+		labelKey: "Grid.commands.print",
+		icon: "pi pi-print",
+		enabled: (row) => row !== null,
+		handler: ({ row }) => {
+			if (row !== null) {
+				openMaterialDocumentPrint(
+					router,
+					"request",
+					row.id,
+				);
+			}
+		},
+	},
 	{ name: "refresh" },
 ];
 

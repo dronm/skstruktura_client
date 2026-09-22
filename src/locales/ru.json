@@ -77,6 +77,7 @@
 			"cancel": "Отмена",
 			"back": "Назад",
 			"history": "История",
+			"print": "Печать",
 			"clear": "Очистить"
 		},
 		"loading": "Загрузка...",
@@ -184,11 +185,43 @@
 		}
 	},
 	"MaterialRequest": {
+		"fields": {
+			"status_id": "Статус"
+		},
 		"actions": {
 			"submit": "Отправить",
 			"submitConfirmHeader": "Отправка заявки",
 			"submitConfirmMessage": "После отправки заявка перейдёт в статус «Новая». Продолжить?"
 		}
+	},
+	"DocumentPrint": {
+		"titles": {
+			"transfer": "Перемещение материалов №{id}",
+			"consumption": "Списание материалов №{id}",
+			"request": "Заявка на материалы №{id}"
+		},
+		"fields": {
+			"number": "Номер",
+			"date": "Дата",
+			"comment": "Комментарий"
+		},
+		"actions": {
+			"close": "Закрыть",
+			"retry": "Повторить"
+		},
+		"errors": {
+			"authenticationRequired": "Для просмотра печатной формы необходимо войти в систему."
+		},
+		"signatures": {
+			"transferred": "Передал",
+			"received": "Принял",
+			"writtenOff": "Списал",
+			"checked": "Проверил",
+			"prepared": "Составил",
+			"approved": "Согласовал"
+		},
+		"lineCount": "Количество строк: {count}",
+		"empty": "В документе нет материалов."
 	},
 	"ConstructionManagerWorkspace": {
 		"title": "Рабочее место прораба",
