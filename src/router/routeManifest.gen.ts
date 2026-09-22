@@ -3,48 +3,30 @@
 import type { RouteRecordRaw } from "vue-router";
 
 import type { ApplicationRouteManifestItem } from "@katren/vue-business-app/application-routes";
-const ConstructionSiteList = () =>
-	import("@/views/constructionSite/ConstructionSiteList.vue");
-const ConstructionSiteEditPage = () =>
-	import("@/views/constructionSite/ConstructionSiteEditPage.vue");
+const ConstructionSiteList = () => import("@/views/constructionSite/ConstructionSiteList.vue");
+const ConstructionSiteEditPage = () => import("@/views/constructionSite/ConstructionSiteEditPage.vue");
 const ContactList = () => import("@/views/contact/ContactList.vue");
 const ContactEditPage = () => import("@/views/contact/ContactEditPage.vue");
-const EmployeePostList = () =>
-	import("@/views/employeePost/EmployeePostList.vue");
+const EmployeePostList = () => import("@/views/employeePost/EmployeePostList.vue");
 const MaterialList = () => import("@/views/material/MaterialList.vue");
 const MaterialEditPage = () => import("@/views/material/MaterialEditPage.vue");
-const MaterialConsumptionList = () =>
-	import("@/views/materialConsumption/MaterialConsumptionList.vue");
-const MaterialConsumptionEditPage = () =>
-	import("@/views/materialConsumption/MaterialConsumptionEditPage.vue");
-const MaterialReceiptList = () =>
-	import("@/views/materialReceipt/MaterialReceiptList.vue");
-const MaterialReceiptEditPage = () =>
-	import("@/views/materialReceipt/MaterialReceiptEditPage.vue");
-const MaterialRequestList = () =>
-	import("@/views/materialRequest/MaterialRequestList.vue");
-const MaterialRequestEditPage = () =>
-	import("@/views/materialRequest/MaterialRequestEditPage.vue");
-const MaterialRequestStatusList = () =>
-	import("@/views/materialRequestStatus/MaterialRequestStatusList.vue");
-const MaterialStatusList = () =>
-	import("@/views/materialStatus/MaterialStatusList.vue");
-const MaterialTransferList = () =>
-	import("@/views/materialTransfer/MaterialTransferList.vue");
-const MaterialTransferEditPage = () =>
-	import("@/views/materialTransfer/MaterialTransferEditPage.vue");
-const MaterialTypeList = () =>
-	import("@/views/materialType/MaterialTypeList.vue");
+const MaterialConsumptionList = () => import("@/views/materialConsumption/MaterialConsumptionList.vue");
+const MaterialConsumptionEditPage = () => import("@/views/materialConsumption/MaterialConsumptionEditPage.vue");
+const MaterialReceiptList = () => import("@/views/materialReceipt/MaterialReceiptList.vue");
+const MaterialReceiptEditPage = () => import("@/views/materialReceipt/MaterialReceiptEditPage.vue");
+const MaterialRequestList = () => import("@/views/materialRequest/MaterialRequestList.vue");
+const MaterialRequestEditPage = () => import("@/views/materialRequest/MaterialRequestEditPage.vue");
+const MaterialRequestStatusList = () => import("@/views/materialRequestStatus/MaterialRequestStatusList.vue");
+const MaterialStatusList = () => import("@/views/materialStatus/MaterialStatusList.vue");
+const MaterialTransferList = () => import("@/views/materialTransfer/MaterialTransferList.vue");
+const MaterialTransferEditPage = () => import("@/views/materialTransfer/MaterialTransferEditPage.vue");
+const MaterialTypeList = () => import("@/views/materialType/MaterialTypeList.vue");
 const MaxUserList = () => import("@/views/maxUser/MaxUserList.vue");
 const MeasureUnitList = () => import("@/views/measureUnit/MeasureUnitList.vue");
-const MeasureUnitEditPage = () =>
-	import("@/views/measureUnit/MeasureUnitEditPage.vue");
-const NotificationTemplateList = () =>
-	import("@/views/notificationTemplate/NotificationTemplateList.vue");
-const NotificationTemplateEditPage = () =>
-	import("@/views/notificationTemplate/NotificationTemplateEditPage.vue");
-const OrderImportanceList = () =>
-	import("@/views/orderImportance/OrderImportanceList.vue");
+const MeasureUnitEditPage = () => import("@/views/measureUnit/MeasureUnitEditPage.vue");
+const NotificationTemplateList = () => import("@/views/notificationTemplate/NotificationTemplateList.vue");
+const NotificationTemplateEditPage = () => import("@/views/notificationTemplate/NotificationTemplateEditPage.vue");
+const OrderImportanceList = () => import("@/views/orderImportance/OrderImportanceList.vue");
 const SupplierList = () => import("@/views/supplier/SupplierList.vue");
 const SupplierEditPage = () => import("@/views/supplier/SupplierEditPage.vue");
 
@@ -281,19 +263,6 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 	),
 	defineGeneratedRoute(
 		{
-			path: "/material-statuses",
-			name: "materialStatuses",
-			component: MaterialStatusList,
-		},
-		{
-			descr: "Статусы материалов",
-			section: "Справочники",
-			icon: "pi pi-tags",
-			menu_available: true,
-		},
-	),
-	defineGeneratedRoute(
-		{
 			path: "/material-requests",
 			name: "materialRequests",
 			component: MaterialRequestList,
@@ -340,6 +309,19 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 		},
 		{
 			descr: "Статусы заявок",
+			section: "Справочники",
+			icon: "pi pi-tags",
+			menu_available: true,
+		},
+	),
+	defineGeneratedRoute(
+		{
+			path: "/material-statuses",
+			name: "materialStatuses",
+			component: MaterialStatusList,
+		},
+		{
+			descr: "Статусы материалов",
 			section: "Справочники",
 			icon: "pi pi-tags",
 			menu_available: true,
@@ -493,6 +475,19 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 	),
 	defineGeneratedRoute(
 		{
+			path: "/order-importances",
+			name: "orderImportances",
+			component: OrderImportanceList,
+		},
+		{
+			descr: "Важность заявок",
+			section: "Справочники",
+			icon: "pi pi-sort-amount-down",
+			menu_available: true,
+		},
+	),
+	defineGeneratedRoute(
+		{
 			path: "/supplier",
 			name: "suppliers",
 			component: SupplierList,
@@ -529,19 +524,6 @@ export const generatedRouteManifest: GeneratedRouteManifestEntry[] = [
 			section: "Формы",
 			icon: null,
 			menu_available: false,
-		},
-	),
-	defineGeneratedRoute(
-		{
-			path: "/order-importances",
-			name: "orderImportances",
-			component: OrderImportanceList,
-		},
-		{
-			descr: "Важность заявок",
-			section: "Справочники",
-			icon: "pi pi-sort-amount-down",
-			menu_available: true,
 		},
 	),
 ];

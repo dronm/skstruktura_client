@@ -18,20 +18,18 @@ export interface MaterialRequest {
 	version: number;
 }
 
-export type MaterialRequestKey = Pick<MaterialRequest, "id">;
+export type MaterialRequestKey = Pick<
+	MaterialRequest,
+	"id"
+>;
 export type MaterialRequestNew = Pick<
 	MaterialRequest,
 	"date" | "construction_site_id" | "construction_manager_id" | "comment"
 >;
-export type MaterialRequestUpd = Partial<
-	Pick<
-		MaterialRequest,
-		| "date"
-		| "construction_site_id"
-		| "construction_manager_id"
-		| "comment"
-	>
->;
+export type MaterialRequestUpd = Partial<Pick<
+	MaterialRequest,
+	"date" | "construction_site_id" | "construction_manager_id" | "comment"
+>>;
 
 export interface MaterialRequestUpdate {
 	key: MaterialRequestKey;

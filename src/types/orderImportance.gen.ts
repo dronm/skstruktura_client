@@ -14,14 +14,18 @@ export interface OrderImportance {
 	is_active: boolean;
 }
 
-export type OrderImportanceKey = Pick<OrderImportance, "id">;
+export type OrderImportanceKey = Pick<
+	OrderImportance,
+	"id"
+>;
 export type OrderImportanceNew = Pick<
 	OrderImportance,
 	"name" | "sort_order" | "is_active"
 >;
-export type OrderImportanceUpd = Partial<
-	Pick<OrderImportance, "name" | "sort_order" | "is_active">
->;
+export type OrderImportanceUpd = Partial<Pick<
+	OrderImportance,
+	"name" | "sort_order" | "is_active"
+>>;
 
 export interface OrderImportanceUpdate {
 	key: OrderImportanceKey;
