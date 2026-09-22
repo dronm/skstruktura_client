@@ -2,24 +2,23 @@
 
 import * as v from "valibot";
 
-import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
 import {
-	createMaterialStatusTypeSchemas,
-} from "@/schemas/enums/materialStatusType.gen";
+	createCommonSchemas,
+	defaultTranslate,
+	type TranslateFn,
+} from "@/schemas/common";
+import { createMaterialStatusTypeSchemas } from "@/schemas/enums/materialStatusType.gen";
 import type { MaterialStatus } from "@/types/materialStatus.gen";
 
 export const createMaterialStatusSchemas = (t: TranslateFn) => {
-	const {
-		DateStringSchema,
-		IdSchema,
-	} = createCommonSchemas(t);
+	const { DateStringSchema, IdSchema } = createCommonSchemas(t);
 	const { MaterialStatusTypeSchema } = createMaterialStatusTypeSchemas(t);
 
 	const MaterialStatusDTOSchema = v.object({
 		id: IdSchema,
 		created_at: DateStringSchema,
-		material_id: IdSchema,
 		construction_site_id: v.nullable(IdSchema),
+		material_id: IdSchema,
 		status: MaterialStatusTypeSchema,
 		is_active: v.boolean(),
 	});
@@ -27,38 +26,21 @@ export const createMaterialStatusSchemas = (t: TranslateFn) => {
 	const MaterialStatusSchema = v.object({
 		id: IdSchema,
 		created_at: v.date(),
-		material_id: IdSchema,
 		construction_site_id: v.nullable(IdSchema),
+		material_id: IdSchema,
 		status: MaterialStatusTypeSchema,
 		is_active: v.boolean(),
 	});
 
-	const MaterialStatusKeySchema = v.pick(
-		MaterialStatusSchema,
-		[
-			"id",
-		],
-	);
-	const MaterialStatusNewSchema = v.pick(
-		MaterialStatusSchema,
-		[
-			"created_at",
-			"material_id",
-			"construction_site_id",
-			"status",
-			"is_active",
-		],
-	);
-	const MaterialStatusUpdSchema = v.partial(v.pick(
-		MaterialStatusSchema,
-		[
-			"created_at",
-			"material_id",
-			"construction_site_id",
-			"status",
-			"is_active",
-		],
-	));
+	const MaterialStatusKeySchema = v.pick(MaterialStatusSchema, ["id"]);
+	const MaterialStatusNewSchema = v.object({
+		created_at: v.date(),
+		construction_site_id: IdSchema,
+		material_id: IdSchema,
+		status: MaterialStatusTypeSchema,
+		is_active: v.boolean(),
+	});
+	const MaterialStatusUpdSchema = v.partial(MaterialStatusNewSchema);
 
 	const MaterialStatusUpdateSchema = v.object({
 		key: MaterialStatusKeySchema,
@@ -76,16 +58,19 @@ export const createMaterialStatusSchemas = (t: TranslateFn) => {
 
 const materialStatusSchemas = createMaterialStatusSchemas(defaultTranslate);
 
-export const MaterialStatusDTOSchema = materialStatusSchemas.MaterialStatusDTOSchema;
+export const MaterialStatusDTOSchema =
+	materialStatusSchemas.MaterialStatusDTOSchema;
 export const MaterialStatusSchema = materialStatusSchemas.MaterialStatusSchema;
-export const MaterialStatusKeySchema = materialStatusSchemas.MaterialStatusKeySchema;
-export const MaterialStatusNewSchema = materialStatusSchemas.MaterialStatusNewSchema;
-export const MaterialStatusUpdSchema = materialStatusSchemas.MaterialStatusUpdSchema;
-export const MaterialStatusUpdateSchema = materialStatusSchemas.MaterialStatusUpdateSchema;
+export const MaterialStatusKeySchema =
+	materialStatusSchemas.MaterialStatusKeySchema;
+export const MaterialStatusNewSchema =
+	materialStatusSchemas.MaterialStatusNewSchema;
+export const MaterialStatusUpdSchema =
+	materialStatusSchemas.MaterialStatusUpdSchema;
+export const MaterialStatusUpdateSchema =
+	materialStatusSchemas.MaterialStatusUpdateSchema;
 
-export const materialStatusFromDTO = (
-	dto: unknown,
-): MaterialStatus => {
+export const materialStatusFromDTO = (dto: unknown): MaterialStatus => {
 	const parsedDTO = v.parse(MaterialStatusDTOSchema, dto);
 
 	return v.parse(MaterialStatusSchema, {

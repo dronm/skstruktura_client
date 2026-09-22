@@ -2,7 +2,11 @@
 
 import * as v from "valibot";
 
-import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
+import {
+	createCommonSchemas,
+	defaultTranslate,
+	type TranslateFn,
+} from "@/schemas/common";
 import type { MaterialRequestItemList } from "@/types/materialRequestItemList.gen";
 
 export const createMaterialRequestItemListSchemas = (t: TranslateFn) => {
@@ -56,10 +60,13 @@ export const createMaterialRequestItemListSchemas = (t: TranslateFn) => {
 	};
 };
 
-const materialRequestItemListSchemas = createMaterialRequestItemListSchemas(defaultTranslate);
+const materialRequestItemListSchemas =
+	createMaterialRequestItemListSchemas(defaultTranslate);
 
-export const MaterialRequestItemListDTOSchema = materialRequestItemListSchemas.MaterialRequestItemListDTOSchema;
-export const MaterialRequestItemListSchema = materialRequestItemListSchemas.MaterialRequestItemListSchema;
+export const MaterialRequestItemListDTOSchema =
+	materialRequestItemListSchemas.MaterialRequestItemListDTOSchema;
+export const MaterialRequestItemListSchema =
+	materialRequestItemListSchemas.MaterialRequestItemListSchema;
 
 export const materialRequestItemListFromDTO = (
 	dto: unknown,
@@ -68,6 +75,9 @@ export const materialRequestItemListFromDTO = (
 
 	return v.parse(MaterialRequestItemListSchema, {
 		...parsedDTO,
-		required_date: parsedDTO.required_date === null ? null : new Date(parsedDTO.required_date),
+		required_date:
+			parsedDTO.required_date === null
+				? null
+				: new Date(parsedDTO.required_date),
 	});
 };

@@ -10,6 +10,8 @@ export const getDefaultRouteForRole = (
 			return { name: "users" };
 		case "construction_site_manager":
 			return { name: "constructionManagerWorkspace" };
+		case "supply_manager":
+			return { name: "supplyManagerWorkspace" };
 		default:
 			return { name: "userProfile" };
 	}

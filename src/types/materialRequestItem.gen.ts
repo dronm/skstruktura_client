@@ -26,18 +26,33 @@ export interface MaterialRequestItem {
 	status_id: number;
 }
 
-export type MaterialRequestItemKey = Pick<
-	MaterialRequestItem,
-	"id"
->;
+export type MaterialRequestItemKey = Pick<MaterialRequestItem, "id">;
 export type MaterialRequestItemNew = Pick<
 	MaterialRequestItem,
-	"line_num" | "material_request_id" | "material_id" | "measure_unit_id" | "quant" | "supplier_id" | "required_date" | "order_importance_id" | "status_id"
+	| "line_num"
+	| "material_request_id"
+	| "material_id"
+	| "measure_unit_id"
+	| "quant"
+	| "supplier_id"
+	| "required_date"
+	| "order_importance_id"
+	| "status_id"
 >;
-export type MaterialRequestItemUpd = Partial<Pick<
-	MaterialRequestItem,
-	"line_num" | "material_request_id" | "material_id" | "measure_unit_id" | "quant" | "supplier_id" | "required_date" | "order_importance_id" | "status_id"
->>;
+export type MaterialRequestItemUpd = Partial<
+	Pick<
+		MaterialRequestItem,
+		| "line_num"
+		| "material_request_id"
+		| "material_id"
+		| "measure_unit_id"
+		| "quant"
+		| "supplier_id"
+		| "required_date"
+		| "order_importance_id"
+		| "status_id"
+	>
+>;
 
 export interface MaterialRequestItemUpdate {
 	key: MaterialRequestItemKey;

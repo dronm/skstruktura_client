@@ -66,6 +66,13 @@ const columns: GridColumn<MaterialRequestList>[] = [
 		searchable: false,
 		width: "28rem",
 	},
+	{
+		field: "status",
+		headerKey: "MaterialRequest.fields.status_id",
+		format: formatReference,
+		searchable: false,
+		width: "14rem",
+	},
 ];
 
 const commands: GridCommand<MaterialRequestList, MaterialRequestKey>[] = [

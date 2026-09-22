@@ -70,7 +70,11 @@ export interface MaterialReceiptDocumentForm {
 	supplier_id: number;
 	number: string;
 	comment: string | null;
-	items: (MaterialReceiptItem & { material?: MaterialDocumentReference; measure_unit?: MaterialDocumentReference; construction_site?: MaterialDocumentReference | null })[];
+	items: (MaterialReceiptItem & {
+		material?: MaterialDocumentReference;
+		measure_unit?: MaterialDocumentReference;
+		construction_site?: MaterialDocumentReference | null;
+	})[];
 }
 
 export interface MaterialReceiptDocumentSaveItem {
@@ -129,7 +133,11 @@ export interface MaterialConsumptionDocumentForm {
 	date: Date | undefined;
 	construction_site_id: number;
 	comment: string | null;
-	items: (MaterialConsumptionItem & { material?: MaterialDocumentReference; measure_unit?: MaterialDocumentReference; construction_site?: MaterialDocumentReference | null })[];
+	items: (MaterialConsumptionItem & {
+		material?: MaterialDocumentReference;
+		measure_unit?: MaterialDocumentReference;
+		construction_site?: MaterialDocumentReference | null;
+	})[];
 }
 
 export interface MaterialConsumptionDocumentSaveItem {
@@ -185,7 +193,11 @@ export interface MaterialTransferDocumentForm {
 	source_construction_site_id: number;
 	destination_construction_site_id: number;
 	comment: string | null;
-	items: (MaterialTransferItem & { material?: MaterialDocumentReference; measure_unit?: MaterialDocumentReference; construction_site?: MaterialDocumentReference | null })[];
+	items: (MaterialTransferItem & {
+		material?: MaterialDocumentReference;
+		measure_unit?: MaterialDocumentReference;
+		construction_site?: MaterialDocumentReference | null;
+	})[];
 }
 
 export interface MaterialTransferDocumentSaveItem {
@@ -225,6 +237,7 @@ export interface MaterialRequestDocumentItemDTO {
 export interface MaterialRequestDocumentDTO extends MaterialRequestDTO {
 	construction_site: MaterialDocumentReference;
 	construction_manager: MaterialDocumentReference;
+	status: MaterialDocumentReference;
 	items: MaterialRequestDocumentItemDTO[];
 }
 
@@ -239,12 +252,14 @@ export interface MaterialRequestDocumentItem extends MaterialRequestItem {
 export interface MaterialRequestDocument extends MaterialRequest {
 	construction_site: MaterialDocumentReference;
 	construction_manager: MaterialDocumentReference;
+	status: MaterialDocumentReference;
 	items: MaterialRequestDocumentItem[];
 }
 
 export interface MaterialRequestDocumentForm {
 	construction_site?: MaterialDocumentReference | null;
 	construction_manager?: MaterialDocumentReference | null;
+	status?: MaterialDocumentReference | null;
 
 	id: number;
 	version: number;
@@ -252,6 +267,7 @@ export interface MaterialRequestDocumentForm {
 	construction_site_id: number;
 	construction_manager_id: number;
 	comment: string | null;
+	status_id: number;
 	items: (MaterialRequestItem & {
 		material?: MaterialDocumentReference;
 		measure_unit?: MaterialDocumentReference;

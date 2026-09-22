@@ -2,16 +2,16 @@
 
 import * as v from "valibot";
 
-import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
+import {
+	createCommonSchemas,
+	defaultTranslate,
+	type TranslateFn,
+} from "@/schemas/common";
 import type { MaterialRequestItem } from "@/types/materialRequestItem.gen";
 
 export const createMaterialRequestItemSchemas = (t: TranslateFn) => {
-	const {
-		DateStringSchema,
-		IntSchema,
-		IdSchema,
-		NumberSchema,
-	} = createCommonSchemas(t);
+	const { DateStringSchema, IntSchema, IdSchema, NumberSchema } =
+		createCommonSchemas(t);
 
 	const MaterialRequestItemDTOSchema = v.object({
 		id: IdSchema,
@@ -39,15 +39,22 @@ export const createMaterialRequestItemSchemas = (t: TranslateFn) => {
 		status_id: IdSchema,
 	});
 
-	const MaterialRequestItemKeySchema = v.pick(
-		MaterialRequestItemSchema,
-		[
-			"id",
-		],
-	);
-	const MaterialRequestItemNewSchema = v.pick(
-		MaterialRequestItemSchema,
-		[
+	const MaterialRequestItemKeySchema = v.pick(MaterialRequestItemSchema, [
+		"id",
+	]);
+	const MaterialRequestItemNewSchema = v.pick(MaterialRequestItemSchema, [
+		"line_num",
+		"material_request_id",
+		"material_id",
+		"measure_unit_id",
+		"quant",
+		"supplier_id",
+		"required_date",
+		"order_importance_id",
+		"status_id",
+	]);
+	const MaterialRequestItemUpdSchema = v.partial(
+		v.pick(MaterialRequestItemSchema, [
 			"line_num",
 			"material_request_id",
 			"material_id",
@@ -57,22 +64,8 @@ export const createMaterialRequestItemSchemas = (t: TranslateFn) => {
 			"required_date",
 			"order_importance_id",
 			"status_id",
-		],
+		]),
 	);
-	const MaterialRequestItemUpdSchema = v.partial(v.pick(
-		MaterialRequestItemSchema,
-		[
-			"line_num",
-			"material_request_id",
-			"material_id",
-			"measure_unit_id",
-			"quant",
-			"supplier_id",
-			"required_date",
-			"order_importance_id",
-			"status_id",
-		],
-	));
 
 	const MaterialRequestItemUpdateSchema = v.object({
 		key: MaterialRequestItemKeySchema,
@@ -88,14 +81,21 @@ export const createMaterialRequestItemSchemas = (t: TranslateFn) => {
 	};
 };
 
-const materialRequestItemSchemas = createMaterialRequestItemSchemas(defaultTranslate);
+const materialRequestItemSchemas =
+	createMaterialRequestItemSchemas(defaultTranslate);
 
-export const MaterialRequestItemDTOSchema = materialRequestItemSchemas.MaterialRequestItemDTOSchema;
-export const MaterialRequestItemSchema = materialRequestItemSchemas.MaterialRequestItemSchema;
-export const MaterialRequestItemKeySchema = materialRequestItemSchemas.MaterialRequestItemKeySchema;
-export const MaterialRequestItemNewSchema = materialRequestItemSchemas.MaterialRequestItemNewSchema;
-export const MaterialRequestItemUpdSchema = materialRequestItemSchemas.MaterialRequestItemUpdSchema;
-export const MaterialRequestItemUpdateSchema = materialRequestItemSchemas.MaterialRequestItemUpdateSchema;
+export const MaterialRequestItemDTOSchema =
+	materialRequestItemSchemas.MaterialRequestItemDTOSchema;
+export const MaterialRequestItemSchema =
+	materialRequestItemSchemas.MaterialRequestItemSchema;
+export const MaterialRequestItemKeySchema =
+	materialRequestItemSchemas.MaterialRequestItemKeySchema;
+export const MaterialRequestItemNewSchema =
+	materialRequestItemSchemas.MaterialRequestItemNewSchema;
+export const MaterialRequestItemUpdSchema =
+	materialRequestItemSchemas.MaterialRequestItemUpdSchema;
+export const MaterialRequestItemUpdateSchema =
+	materialRequestItemSchemas.MaterialRequestItemUpdateSchema;
 
 export const materialRequestItemFromDTO = (
 	dto: unknown,
@@ -104,6 +104,9 @@ export const materialRequestItemFromDTO = (
 
 	return v.parse(MaterialRequestItemSchema, {
 		...parsedDTO,
-		required_date: parsedDTO.required_date === null ? null : new Date(parsedDTO.required_date),
+		required_date:
+			parsedDTO.required_date === null
+				? null
+				: new Date(parsedDTO.required_date),
 	});
 };

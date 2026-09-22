@@ -22,6 +22,8 @@ const MaterialBalancePage = () =>
 	import("@/views/reports/MaterialBalancePage.vue");
 const ConstructionManagerWorkspace = () =>
 	import("@/views/constructionManager/ConstructionManagerWorkspace.vue");
+const SupplyManagerWorkspace = () =>
+	import("@/views/supplyManager/SupplyManagerWorkspace.vue");
 const DiadocDocumentList = () =>
 	import("@/views/diadoc/DiadocDocumentList.vue");
 const DiadocDocumentEditPage = () =>
@@ -71,6 +73,22 @@ const manualRouteManifest: RouteManifestEntry[] = [
 		},
 		{
 			descr: "Рабочее место прораба",
+			section: "Формы",
+			icon: "pi pi-briefcase",
+			menu_available: false,
+		},
+	),
+	defineRoute(
+		{
+			path: "/supply-manager",
+			name: "supplyManagerWorkspace",
+			component: SupplyManagerWorkspace,
+			meta: {
+				roleId: "supply_manager",
+			},
+		},
+		{
+			descr: "Рабочее место снабженца",
 			section: "Формы",
 			icon: "pi pi-briefcase",
 			menu_available: false,

@@ -2,15 +2,16 @@
 
 import * as v from "valibot";
 
-import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
+import {
+	createCommonSchemas,
+	defaultTranslate,
+	type TranslateFn,
+} from "@/schemas/common";
 import type { OrderImportance } from "@/types/orderImportance.gen";
 
 export const createOrderImportanceSchemas = (t: TranslateFn) => {
-	const {
-		RequiredTextSchema,
-		IntSchema,
-		IdSchema,
-	} = createCommonSchemas(t);
+	const { RequiredTextSchema, IntSchema, IdSchema } =
+		createCommonSchemas(t);
 
 	const OrderImportanceDTOSchema = v.object({
 		id: IdSchema,
@@ -26,28 +27,19 @@ export const createOrderImportanceSchemas = (t: TranslateFn) => {
 		is_active: v.boolean(),
 	});
 
-	const OrderImportanceKeySchema = v.pick(
-		OrderImportanceSchema,
-		[
-			"id",
-		],
-	);
-	const OrderImportanceNewSchema = v.pick(
-		OrderImportanceSchema,
-		[
+	const OrderImportanceKeySchema = v.pick(OrderImportanceSchema, ["id"]);
+	const OrderImportanceNewSchema = v.pick(OrderImportanceSchema, [
+		"name",
+		"sort_order",
+		"is_active",
+	]);
+	const OrderImportanceUpdSchema = v.partial(
+		v.pick(OrderImportanceSchema, [
 			"name",
 			"sort_order",
 			"is_active",
-		],
+		]),
 	);
-	const OrderImportanceUpdSchema = v.partial(v.pick(
-		OrderImportanceSchema,
-		[
-			"name",
-			"sort_order",
-			"is_active",
-		],
-	));
 
 	const OrderImportanceUpdateSchema = v.object({
 		key: OrderImportanceKeySchema,
@@ -65,16 +57,20 @@ export const createOrderImportanceSchemas = (t: TranslateFn) => {
 
 const orderImportanceSchemas = createOrderImportanceSchemas(defaultTranslate);
 
-export const OrderImportanceDTOSchema = orderImportanceSchemas.OrderImportanceDTOSchema;
-export const OrderImportanceSchema = orderImportanceSchemas.OrderImportanceSchema;
-export const OrderImportanceKeySchema = orderImportanceSchemas.OrderImportanceKeySchema;
-export const OrderImportanceNewSchema = orderImportanceSchemas.OrderImportanceNewSchema;
-export const OrderImportanceUpdSchema = orderImportanceSchemas.OrderImportanceUpdSchema;
-export const OrderImportanceUpdateSchema = orderImportanceSchemas.OrderImportanceUpdateSchema;
+export const OrderImportanceDTOSchema =
+	orderImportanceSchemas.OrderImportanceDTOSchema;
+export const OrderImportanceSchema =
+	orderImportanceSchemas.OrderImportanceSchema;
+export const OrderImportanceKeySchema =
+	orderImportanceSchemas.OrderImportanceKeySchema;
+export const OrderImportanceNewSchema =
+	orderImportanceSchemas.OrderImportanceNewSchema;
+export const OrderImportanceUpdSchema =
+	orderImportanceSchemas.OrderImportanceUpdSchema;
+export const OrderImportanceUpdateSchema =
+	orderImportanceSchemas.OrderImportanceUpdateSchema;
 
-export const orderImportanceFromDTO = (
-	dto: unknown,
-): OrderImportance => {
+export const orderImportanceFromDTO = (dto: unknown): OrderImportance => {
 	const parsedDTO = v.parse(OrderImportanceDTOSchema, dto);
 
 	return v.parse(OrderImportanceSchema, {

@@ -2,7 +2,11 @@
 
 import * as v from "valibot";
 
-import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
+import {
+	createCommonSchemas,
+	defaultTranslate,
+	type TranslateFn,
+} from "@/schemas/common";
 import type { MaterialRequestList } from "@/types/materialRequestList.gen";
 
 export const createMaterialRequestListSchemas = (t: TranslateFn) => {
@@ -23,6 +27,8 @@ export const createMaterialRequestListSchemas = (t: TranslateFn) => {
 		version: IntSchema,
 		construction_site: AttrsSchema,
 		construction_manager: AttrsSchema,
+		status_id: IdSchema,
+		status: AttrsSchema,
 	});
 
 	const MaterialRequestListSchema = v.object({
@@ -34,6 +40,8 @@ export const createMaterialRequestListSchemas = (t: TranslateFn) => {
 		version: IntSchema,
 		construction_site: AttrsSchema,
 		construction_manager: AttrsSchema,
+		status_id: IdSchema,
+		status: AttrsSchema,
 	});
 
 	return {
@@ -42,10 +50,13 @@ export const createMaterialRequestListSchemas = (t: TranslateFn) => {
 	};
 };
 
-const materialRequestListSchemas = createMaterialRequestListSchemas(defaultTranslate);
+const materialRequestListSchemas =
+	createMaterialRequestListSchemas(defaultTranslate);
 
-export const MaterialRequestListDTOSchema = materialRequestListSchemas.MaterialRequestListDTOSchema;
-export const MaterialRequestListSchema = materialRequestListSchemas.MaterialRequestListSchema;
+export const MaterialRequestListDTOSchema =
+	materialRequestListSchemas.MaterialRequestListDTOSchema;
+export const MaterialRequestListSchema =
+	materialRequestListSchemas.MaterialRequestListSchema;
 
 export const materialRequestListFromDTO = (
 	dto: unknown,

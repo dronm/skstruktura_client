@@ -155,6 +155,12 @@ export const createMaterialRequestDocumentForm = (
 	construction_site_id: 0,
 	construction_manager_id: constructionManagerID,
 	comment: null,
+	status_id: 1,
+	status: {
+		keys: { id: 1 },
+		descr: "Черновик",
+		dataType: "materialRequestStatuses",
+	},
 	items: [],
 });
 
@@ -179,8 +185,17 @@ export const copyMaterialRequestDocument = (
 	...materialRequestDocumentToForm(document),
 	id: 0,
 	version: 0,
+	status_id: 1,
+	status: {
+		keys: { id: 1 },
+		descr: "Черновик",
+		dataType: "materialRequestStatuses",
+	},
 	items: document.items.map(
-		(item, index): MaterialRequestDocumentForm["items"][number] => ({
+		(
+			item,
+			index,
+		): MaterialRequestDocumentForm["items"][number] => ({
 			...item,
 			id: -(index + 1),
 			line_num: index + 1,

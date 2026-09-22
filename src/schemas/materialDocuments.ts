@@ -122,6 +122,8 @@ const MaterialRequestDocumentDTOSchema = v.object({
 	comment: v.nullable(TextSchema),
 	construction_site: AttrsSchema,
 	construction_manager: AttrsSchema,
+	status_id: IdSchema,
+	status: AttrsSchema,
 	items: v.array(MaterialRequestDocumentItemDTOSchema),
 });
 

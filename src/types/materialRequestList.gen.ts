@@ -9,6 +9,8 @@ export interface MaterialRequestListDTO {
 	version: number;
 	construction_site: Record<string, unknown>;
 	construction_manager: Record<string, unknown>;
+	status_id: number;
+	status: Record<string, unknown>;
 }
 
 export interface MaterialRequestList {
@@ -20,4 +22,6 @@ export interface MaterialRequestList {
 	version: number;
 	construction_site: Record<string, unknown>;
 	construction_manager: Record<string, unknown>;
+	status_id: number;
+	status: Record<string, unknown>;
 }

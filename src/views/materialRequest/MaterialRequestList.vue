@@ -25,11 +25,10 @@ const authStore = useAuthStore();
 const roleID = authStore.user?.role_id;
 const canManageRequests =
 	roleID === "admin" || roleID === "construction_site_manager";
-const canEditRequests = canManageRequests || roleID === "supply_manager";
 
 const commands: GridCommand<MaterialRequestList, MaterialRequestKey>[] = [
 	...(canManageRequests ? ([{ name: "create" }] as const) : []),
-	...(canEditRequests ? ([{ name: "edit" }] as const) : []),
+	...(canManageRequests ? ([{ name: "edit" }] as const) : []),
 	...(canManageRequests ? ([{ name: "copy" }] as const) : []),
 	...(canManageRequests ? ([{ name: "delete" }] as const) : []),
 	{ name: "search" },
@@ -88,6 +87,14 @@ const collection = defineCollection<
 			headerKey: "MaterialRequest.fields.comment",
 			sortable: true,
 			width: "28rem",
+		},
+		{
+			field: "status",
+			headerKey: "MaterialRequest.fields.status_id",
+			sortable: true,
+			sortField: "status->>'descr'",
+			format: formatReference,
+			width: "14rem",
 		},
 	],
 	commands,

@@ -2,16 +2,16 @@
 
 import * as v from "valibot";
 
-import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
+import {
+	createCommonSchemas,
+	defaultTranslate,
+	type TranslateFn,
+} from "@/schemas/common";
 import type { MaterialRequest } from "@/types/materialRequest.gen";
 
 export const createMaterialRequestSchemas = (t: TranslateFn) => {
-	const {
-		TextSchema,
-		DateStringSchema,
-		IntSchema,
-		IdSchema,
-	} = createCommonSchemas(t);
+	const { TextSchema, DateStringSchema, IntSchema, IdSchema } =
+		createCommonSchemas(t);
 
 	const MaterialRequestDTOSchema = v.object({
 		id: IdSchema,
@@ -20,6 +20,7 @@ export const createMaterialRequestSchemas = (t: TranslateFn) => {
 		construction_manager_id: IdSchema,
 		comment: v.nullable(TextSchema),
 		version: IntSchema,
+		status_id: IdSchema,
 	});
 
 	const MaterialRequestSchema = v.object({
@@ -29,32 +30,24 @@ export const createMaterialRequestSchemas = (t: TranslateFn) => {
 		construction_manager_id: IdSchema,
 		comment: v.nullable(TextSchema),
 		version: IntSchema,
+		status_id: IdSchema,
 	});
 
-	const MaterialRequestKeySchema = v.pick(
-		MaterialRequestSchema,
-		[
-			"id",
-		],
-	);
-	const MaterialRequestNewSchema = v.pick(
-		MaterialRequestSchema,
-		[
+	const MaterialRequestKeySchema = v.pick(MaterialRequestSchema, ["id"]);
+	const MaterialRequestNewSchema = v.pick(MaterialRequestSchema, [
+		"date",
+		"construction_site_id",
+		"construction_manager_id",
+		"comment",
+	]);
+	const MaterialRequestUpdSchema = v.partial(
+		v.pick(MaterialRequestSchema, [
 			"date",
 			"construction_site_id",
 			"construction_manager_id",
 			"comment",
-		],
+		]),
 	);
-	const MaterialRequestUpdSchema = v.partial(v.pick(
-		MaterialRequestSchema,
-		[
-			"date",
-			"construction_site_id",
-			"construction_manager_id",
-			"comment",
-		],
-	));
 
 	const MaterialRequestUpdateSchema = v.object({
 		key: MaterialRequestKeySchema,
@@ -72,16 +65,20 @@ export const createMaterialRequestSchemas = (t: TranslateFn) => {
 
 const materialRequestSchemas = createMaterialRequestSchemas(defaultTranslate);
 
-export const MaterialRequestDTOSchema = materialRequestSchemas.MaterialRequestDTOSchema;
-export const MaterialRequestSchema = materialRequestSchemas.MaterialRequestSchema;
-export const MaterialRequestKeySchema = materialRequestSchemas.MaterialRequestKeySchema;
-export const MaterialRequestNewSchema = materialRequestSchemas.MaterialRequestNewSchema;
-export const MaterialRequestUpdSchema = materialRequestSchemas.MaterialRequestUpdSchema;
-export const MaterialRequestUpdateSchema = materialRequestSchemas.MaterialRequestUpdateSchema;
+export const MaterialRequestDTOSchema =
+	materialRequestSchemas.MaterialRequestDTOSchema;
+export const MaterialRequestSchema =
+	materialRequestSchemas.MaterialRequestSchema;
+export const MaterialRequestKeySchema =
+	materialRequestSchemas.MaterialRequestKeySchema;
+export const MaterialRequestNewSchema =
+	materialRequestSchemas.MaterialRequestNewSchema;
+export const MaterialRequestUpdSchema =
+	materialRequestSchemas.MaterialRequestUpdSchema;
+export const MaterialRequestUpdateSchema =
+	materialRequestSchemas.MaterialRequestUpdateSchema;
 
-export const materialRequestFromDTO = (
-	dto: unknown,
-): MaterialRequest => {
+export const materialRequestFromDTO = (dto: unknown): MaterialRequest => {
 	const parsedDTO = v.parse(MaterialRequestDTOSchema, dto);
 
 	return v.parse(MaterialRequestSchema, {

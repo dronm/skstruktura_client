@@ -7,6 +7,7 @@ export interface MaterialRequestDTO {
 	construction_manager_id: number;
 	comment: string | null;
 	version: number;
+	status_id: number;
 }
 
 export interface MaterialRequest {
@@ -16,20 +17,23 @@ export interface MaterialRequest {
 	construction_manager_id: number;
 	comment: string | null;
 	version: number;
+	status_id: number;
 }
 
-export type MaterialRequestKey = Pick<
-	MaterialRequest,
-	"id"
->;
+export type MaterialRequestKey = Pick<MaterialRequest, "id">;
 export type MaterialRequestNew = Pick<
 	MaterialRequest,
 	"date" | "construction_site_id" | "construction_manager_id" | "comment"
 >;
-export type MaterialRequestUpd = Partial<Pick<
-	MaterialRequest,
-	"date" | "construction_site_id" | "construction_manager_id" | "comment"
->>;
+export type MaterialRequestUpd = Partial<
+	Pick<
+		MaterialRequest,
+		| "date"
+		| "construction_site_id"
+		| "construction_manager_id"
+		| "comment"
+	>
+>;
 
 export interface MaterialRequestUpdate {
 	key: MaterialRequestKey;

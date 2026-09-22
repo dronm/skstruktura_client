@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import Button from "primevue/button";
@@ -10,8 +11,37 @@ import { useReferenceSelectionMode } from "@katren/vue-collection-lib";
 import CollectionDirtyGuard from "@katren/vue-collection-lib/components/form/CollectionDirtyGuard.vue";
 
 import wsManager from "@/api/wsConn";
+import { useSupplyManagerDraftGuard } from "@/composables/useSupplyManagerDraftGuard";
 import { useAuthStore } from "@/stores/useAuthStore";
+import type { RoleId } from "@/types/enums/roleId";
 import Login from "@/views/Login.vue";
+
+interface RoleWorkspace {
+	routeName: string;
+	subtitle: string;
+	icon: string;
+}
+
+const getRoleWorkspace = (
+	roleId: RoleId | null | undefined,
+): RoleWorkspace | null => {
+	switch (roleId) {
+		case "construction_site_manager":
+			return {
+				routeName: "constructionManagerWorkspace",
+				subtitle: "Рабочее место прораба",
+				icon: "pi pi-building",
+			};
+		case "supply_manager":
+			return {
+				routeName: "supplyManagerWorkspace",
+				subtitle: "Рабочее место снабженца",
+				icon: "pi pi-truck",
+			};
+		default:
+			return null;
+	}
+};
 
 const {
 	menu,
@@ -22,6 +52,8 @@ const {
 });
 
 const progAboutVisible = ref(false);
+const { t } = useI18n();
+const { active: supplyManagerDraftActive } = useSupplyManagerDraftGuard();
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
@@ -31,9 +63,7 @@ const { user } = storeToRefs(authStore);
 const authed = computed(() => authStore.isAuthenticated());
 const userName = computed(() => user.value?.name ?? null);
 const userRoleId = computed(() => user.value?.role_id ?? null);
-const isConstructionSiteManager = computed(
-	() => userRoleId.value === "construction_site_manager",
-);
+const roleWorkspace = computed(() => getRoleWorkspace(userRoleId.value));
 const canManageMenu = computed(() => userRoleId.value === "admin");
 const canViewApplicationRoutes = computed(() => userRoleId.value === "admin");
 const collectionDirtyGuardEnabled = computed(() => {
@@ -66,6 +96,15 @@ const openApplicationRoutes = async (): Promise<void> => {
 };
 
 const handleLogout = async (): Promise<void> => {
+	if (
+		supplyManagerDraftActive.value &&
+		!window.confirm(
+			t("SupplyManagerWorkspace.assignment.leaveWarning"),
+		)
+	) {
+		return;
+	}
+	supplyManagerDraftActive.value = false;
 	try {
 		await authStore.logout();
 	} finally {
@@ -79,7 +118,7 @@ watch(
 	async ([isAuthed, , roleId]) => {
 		if (isAuthed) {
 			wsManager.connect();
-			if (roleId === "construction_site_manager") {
+			if (getRoleWorkspace(roleId) !== null) {
 				menu.value = [];
 				menuError.value = null;
 				return;
@@ -120,10 +159,7 @@ watch(
 		</div>
 
 		<HorizontalMainMenu
-			v-if="
-				!referenceSelectionMode &&
-				!isConstructionSiteManager
-			"
+			v-if="!referenceSelectionMode && roleWorkspace === null"
 			:menu="menu"
 			:user-name="userName"
 			:menu-error="menuError"
@@ -139,10 +175,7 @@ watch(
 		></HorizontalMainMenu>
 
 		<header
-			v-if="
-				!referenceSelectionMode &&
-				isConstructionSiteManager
-			"
+			v-if="!referenceSelectionMode && roleWorkspace !== null"
 			class="relative z-20 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur"
 		>
 			<div
@@ -150,7 +183,7 @@ watch(
 			>
 				<RouterLink
 					:to="{
-						name: 'constructionManagerWorkspace',
+						name: roleWorkspace.routeName,
 					}"
 					class="flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-slate-800 transition-colors hover:bg-slate-100"
 				>
@@ -158,7 +191,9 @@ watch(
 						class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-700 text-white"
 					>
 						<i
-							class="pi pi-building"
+							:class="
+								roleWorkspace.icon
+							"
 							aria-hidden="true"
 						/>
 					</span>
@@ -171,7 +206,9 @@ watch(
 						<span
 							class="hidden truncate text-xs text-slate-500 sm:block"
 						>
-							Рабочее место прораба
+							{{
+								roleWorkspace.subtitle
+							}}
 						</span>
 					</span>
 				</RouterLink>
