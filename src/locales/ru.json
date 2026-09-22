@@ -35,7 +35,7 @@
 		"admin": "Администратор",
 		"construction_site_manager": "Прораб",
 		"accountant": "Бухгалтер",
-		"supplier": "Снабженец"
+		"supply_manager": "Снабженец"
 	},
 	"User": {
 		"title": "Пользователи",

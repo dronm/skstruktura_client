@@ -38,7 +38,7 @@ const authStore = useAuthStore();
 const roleID = authStore.user?.role_id;
 const canEditRequest =
 	roleID === "admin" || roleID === "construction_site_manager";
-const canManageFulfillment = roleID === "admin" || roleID === "supplier";
+const canManageFulfillment = roleID === "admin" || roleID === "supply_manager";
 
 const numberValue = (value: unknown): number => {
 	return typeof value === "number" && Number.isFinite(value) ? value : 0;
@@ -292,7 +292,10 @@ const collection = useLocalDocumentCollection<MaterialRequestItem>({
 			:showCommandShortcuts="false"
 		>
 			<template
-				#editor-order_importance_id="{ value, updateValue }"
+				#editor-order_importance_id="{
+					value,
+					updateValue,
+				}"
 			>
 				<OrderImportanceReferenceSelect
 					:modelValue="numberValue(value)"

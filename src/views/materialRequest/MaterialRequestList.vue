@@ -25,7 +25,7 @@ const authStore = useAuthStore();
 const roleID = authStore.user?.role_id;
 const canManageRequests =
 	roleID === "admin" || roleID === "construction_site_manager";
-const canEditRequests = canManageRequests || roleID === "supplier";
+const canEditRequests = canManageRequests || roleID === "supply_manager";
 
 const commands: GridCommand<MaterialRequestList, MaterialRequestKey>[] = [
 	...(canManageRequests ? ([{ name: "create" }] as const) : []),
