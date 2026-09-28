@@ -40,6 +40,9 @@ const MaterialBalanceRowSchema = v.object({
 	measure_unit_id: IdSchema,
 	measure_unit: MaterialBalanceReferenceSchema,
 	balance: NumberSchema,
+	amount: v.nullable(NumberSchema),
+	average_cost: v.nullable(NumberSchema),
+	amount_pending: v.boolean(),
 });
 
 const MaterialBalanceResponseSchema = v.object({

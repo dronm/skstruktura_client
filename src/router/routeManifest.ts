@@ -20,6 +20,8 @@ const MaterialActionReportPage = () =>
 	import("@/views/reports/MaterialActionReportPage.vue");
 const MaterialBalancePage = () =>
 	import("@/views/reports/MaterialBalancePage.vue");
+const InventoryValuationPage = () =>
+	import("@/views/inventoryValuation/InventoryValuationPage.vue");
 const ConstructionManagerWorkspace = () =>
 	import("@/views/constructionManager/ConstructionManagerWorkspace.vue");
 const SupplyManagerWorkspace = () =>
@@ -179,6 +181,19 @@ const manualRouteManifest: RouteManifestEntry[] = [
 			descr: "Остатки материалов",
 			section: "Отчёты",
 			icon: "pi pi-chart-bar",
+			menu_available: true,
+		},
+	),
+	defineRoute(
+		{
+			path: "/inventory-valuation",
+			name: "inventoryValuation",
+			component: InventoryValuationPage,
+		},
+		{
+			descr: "Оценка материалов",
+			section: "Материалы",
+			icon: "pi pi-wallet",
 			menu_available: true,
 		},
 	),

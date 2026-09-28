@@ -92,6 +92,16 @@ const formatNumber = (value: number): string => {
 	return numberFormatter.format(value);
 };
 
+const formatValuation = (
+	value: number | null,
+	pending: boolean,
+): string => {
+	if (pending) {
+		return t("MaterialBalance.pending");
+	}
+	return value === null ? "—" : numberFormatter.format(value);
+};
+
 const formatDateTime = (value: Date | null): string => {
 	return value?.toLocaleString("ru-RU") ?? "";
 };
@@ -342,6 +352,12 @@ onMounted(() => {
 									)
 								}}
 							</th>
+							<th class="w-48 border border-gray-300 px-2 py-2 text-right">
+								{{ t("MaterialBalance.columns.averageCost") }}
+							</th>
+							<th class="w-48 border border-gray-300 px-2 py-2 text-right">
+								{{ t("MaterialBalance.columns.amount") }}
+							</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -358,7 +374,7 @@ onMounted(() => {
 								"
 							>
 								<td
-									colspan="3"
+									colspan="5"
 									class="border border-gray-300 px-3 py-2"
 								>
 									{{
@@ -399,11 +415,17 @@ onMounted(() => {
 										)
 									}}
 								</td>
+								<td class="border border-gray-300 px-3 py-1.5 text-right">
+									{{ formatValuation(row.average_cost, row.amount_pending) }}
+								</td>
+								<td class="border border-gray-300 px-3 py-1.5 text-right">
+									{{ formatValuation(row.amount, row.amount_pending) }}
+								</td>
 							</tr>
 						</template>
 						<tr v-if="total === 0">
 							<td
-								colspan="3"
+								colspan="5"
 								class="border border-gray-300 px-3 py-8 text-center text-gray-500"
 							>
 								{{

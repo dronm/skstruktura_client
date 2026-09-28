@@ -19,6 +19,9 @@ export interface MaterialBalanceRow {
 	measure_unit_id: number;
 	measure_unit: MaterialBalanceReference;
 	balance: number;
+	amount: number | null;
+	average_cost: number | null;
+	amount_pending: boolean;
 }
 
 export interface MaterialBalanceResponse {
