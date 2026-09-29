@@ -3,7 +3,6 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
-import Button from "primevue/button";
 
 import { HorizontalMainMenu, useMainMenu } from "@katren/vue-business-app/menu";
 import { ProgAboutDialog } from "@katren/vue-business-app/prog-about";
@@ -116,14 +115,9 @@ const handleLogout = async (): Promise<void> => {
 
 watch(
 	() => [authed.value, user.value?.id, user.value?.role_id] as const,
-	async ([isAuthed, , roleId]) => {
+	async ([isAuthed]) => {
 		if (isAuthed) {
 			wsManager.connect();
-			if (getRoleWorkspace(roleId) !== null) {
-				menu.value = [];
-				menuError.value = null;
-				return;
-			}
 			await fetchMenu();
 			return;
 		}
@@ -161,15 +155,11 @@ watch(
 		</div>
 
 		<HorizontalMainMenu
-			v-if="
-				!referenceSelectionMode &&
-				!printLayout &&
-				roleWorkspace === null
-			"
+			v-if="!referenceSelectionMode && !printLayout"
 			:menu="menu"
 			:user-name="userName"
 			:menu-error="menuError"
-			:brand-route="{ name: 'main' }"
+			:brand-route="roleWorkspace ? { name: roleWorkspace.routeName } : { name: 'main' }"
 			:can-view-profile="true"
 			:can-manage-menu="canManageMenu"
 			:can-view-application-routes="canViewApplicationRoutes"
@@ -180,79 +170,22 @@ watch(
 			@logout="handleLogout"
 		></HorizontalMainMenu>
 
-		<header
-			v-if="
-				!referenceSelectionMode &&
-				!printLayout &&
-				roleWorkspace !== null
-			"
-			class="relative z-20 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur"
+		<nav
+			v-if="!referenceSelectionMode && !printLayout && roleWorkspace"
+			class="relative z-10 border-b border-slate-200 bg-white/95"
+			aria-label="Рабочее место"
 		>
-			<div
-				class="mx-auto flex min-h-14 w-full max-w-[1700px] items-center gap-2 px-3 py-2 sm:px-5"
-			>
+			<div class="mx-auto flex w-full max-w-[1700px] items-center px-3 py-1 sm:px-5">
 				<RouterLink
-					:to="{
-						name: roleWorkspace.routeName,
-					}"
-					class="flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-slate-800 transition-colors hover:bg-slate-100"
+					:to="{ name: roleWorkspace.routeName }"
+					class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+					active-class="bg-cyan-50 text-cyan-800"
 				>
-					<span
-						class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-700 text-white"
-					>
-						<i
-							:class="
-								roleWorkspace.icon
-							"
-							aria-hidden="true"
-						/>
-					</span>
-					<span class="min-w-0">
-						<span
-							class="block truncate text-sm font-semibold leading-tight"
-						>
-							СК Структура
-						</span>
-						<span
-							class="hidden truncate text-xs text-slate-500 sm:block"
-						>
-							{{
-								roleWorkspace.subtitle
-							}}
-						</span>
-					</span>
+					<i :class="roleWorkspace.icon" aria-hidden="true" />
+					{{ roleWorkspace.subtitle }}
 				</RouterLink>
-
-				<div
-					class="ml-auto flex min-w-0 items-center gap-1 sm:gap-2"
-				>
-					<span
-						v-if="userName"
-						class="hidden max-w-52 truncate text-sm font-medium text-slate-600 md:block"
-					>
-						{{ userName }}
-					</span>
-					<Button
-						icon="pi pi-user"
-						label="Профиль"
-						severity="secondary"
-						text
-						size="small"
-						aria-label="Открыть профиль"
-						@click="openUserProfile"
-					/>
-					<Button
-						icon="pi pi-sign-out"
-						label="Выйти"
-						severity="secondary"
-						text
-						size="small"
-						aria-label="Выйти"
-						@click="handleLogout"
-					/>
-				</div>
 			</div>
-		</header>
+		</nav>
 
 		<ProgAboutDialog v-model:visible="progAboutVisible" />
 
