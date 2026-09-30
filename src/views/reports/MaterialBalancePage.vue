@@ -19,6 +19,9 @@ interface MaterialBalanceGroup {
 	id: number;
 	name: string;
 	rows: MaterialBalanceRow[];
+	quantities: Map<number, { unit: string; balance: number }>;
+	amount: number;
+	amountPending: boolean;
 }
 
 const { t } = useI18n();
@@ -74,13 +77,37 @@ const groupedRows = computed<MaterialBalanceGroup[]>(() => {
 				id: row.material_type_id,
 				name: row.material_type.descr,
 				rows: [],
+				quantities: new Map(),
+				amount: 0,
+				amountPending: false,
 			};
 			groups.set(row.material_type_id, group);
 		}
 		group.rows.push(row);
+		const quantity = group.quantities.get(row.measure_unit_id);
+		group.quantities.set(row.measure_unit_id, {
+			unit: row.measure_unit.descr,
+			balance: (quantity?.balance ?? 0) + row.balance,
+		});
+		if (row.amount_pending || row.amount === null) {
+			group.amountPending = true;
+		} else {
+			group.amount += row.amount;
+		}
 	}
 
 	return Array.from(groups.values());
+});
+
+const reportAmount = computed(() => {
+	let amount = 0;
+	for (const group of groupedRows.value) {
+		if (group.amountPending) {
+			return null;
+		}
+		amount += group.amount;
+	}
+	return amount;
 });
 
 const numberFormatter = new Intl.NumberFormat("ru-RU", {
@@ -90,6 +117,12 @@ const numberFormatter = new Intl.NumberFormat("ru-RU", {
 
 const formatNumber = (value: number): string => {
 	return numberFormatter.format(value);
+};
+
+const formatGroupQuantities = (group: MaterialBalanceGroup): string => {
+	return Array.from(group.quantities.values())
+		.map(({ unit, balance }) => `${formatNumber(balance)} ${unit}`)
+		.join("; ");
 };
 
 const formatValuation = (
@@ -373,13 +406,15 @@ onMounted(() => {
 									font-weight: 700;
 								"
 							>
-								<td
-									colspan="5"
-									class="border border-gray-300 px-3 py-2"
-								>
-									{{
-										group.name
-									}}
+								<td colspan="2" class="border border-gray-300 px-3 py-2">
+									{{ group.name }}
+								</td>
+								<td class="border border-gray-300 px-3 py-2 text-right">
+									{{ formatGroupQuantities(group) }}
+								</td>
+								<td class="border border-gray-300 px-3 py-2" />
+								<td class="border border-gray-300 px-3 py-2 text-right">
+									{{ formatValuation(group.amountPending ? null : group.amount, group.amountPending) }}
 								</td>
 							</tr>
 							<tr
@@ -436,6 +471,16 @@ onMounted(() => {
 							</td>
 						</tr>
 					</tbody>
+					<tfoot v-if="total > 0">
+						<tr class="bg-slate-100 font-bold text-slate-900">
+							<td colspan="4" class="border border-gray-300 px-3 py-2">
+								Итого по отчёту
+							</td>
+							<td class="border border-gray-300 px-3 py-2 text-right">
+								{{ formatValuation(reportAmount, reportAmount === null) }}
+							</td>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 

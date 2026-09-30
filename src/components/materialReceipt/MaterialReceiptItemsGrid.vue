@@ -175,21 +175,6 @@ const columns: GridColumn<MaterialReceiptItem>[] = [
 		setValue: updatePrice,
 	},
 	{
-		field: "amount",
-		headerKey: "MaterialReceiptItem.fields.amount",
-		editable: true,
-		dataType: "number",
-		normalizeValue: (value) => round(numberValue(value), 2),
-		align: "right",
-		width: "12rem",
-		editorProps: {
-			min: 0,
-			minFractionDigits: 2,
-			maxFractionDigits: 2,
-		},
-		setValue: updateAmount,
-	},
-	{
 		field: "vat_percent",
 		headerKey: "MaterialReceiptItem.fields.vat_percent",
 		editable: true,
@@ -213,6 +198,21 @@ const columns: GridColumn<MaterialReceiptItem>[] = [
 			minFractionDigits: 2,
 			maxFractionDigits: 2,
 		},
+	},
+	{
+		field: "amount",
+		headerKey: "MaterialReceiptItem.fields.amount",
+		editable: true,
+		dataType: "number",
+		normalizeValue: (value) => round(numberValue(value), 2),
+		align: "right",
+		width: "12rem",
+		editorProps: {
+			min: 0,
+			minFractionDigits: 2,
+			maxFractionDigits: 2,
+		},
+		setValue: updateAmount,
 	},
 ];
 
