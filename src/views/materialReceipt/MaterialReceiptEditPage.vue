@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 
 import { CollectionEditPage } from "@katren/vue-collection-lib";
 
@@ -20,6 +21,7 @@ import type {
 } from "@/types/materialDocuments";
 
 const { t } = useI18n();
+const route = useRoute();
 const edit = useDocumentEditPage<
 	MaterialReceiptDocumentForm,
 	MaterialDocumentKey,
@@ -28,7 +30,12 @@ const edit = useDocumentEditPage<
 >({
 	api: materialReceiptDocumentApi,
 	createRouteName: "materialReceiptCreate",
-	listRoute: { name: "materialReceipts" },
+	listRoute: () => ({
+		name:
+			route.query.returnTo === "diadocDocuments"
+				? "diadocDocuments"
+				: "materialReceipts",
+	}),
 	keyFromRoute: (route) => ({ id: Number(route.params.id ?? 0) }),
 	copyKeyFromRoute: (route) =>
 		route.query.copy_id

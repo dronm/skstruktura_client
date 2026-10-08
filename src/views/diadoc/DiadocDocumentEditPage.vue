@@ -643,6 +643,7 @@ const executeImport = async (): Promise<void> => {
 		await router.push({
 			name: "materialReceiptEdit",
 			params: { id: String(response.material_receipt_id) },
+			query: { returnTo: "diadocDocuments" },
 		});
 	} catch (caught: unknown) {
 		error.value =
@@ -772,6 +773,7 @@ onMounted(load);
 						@click="
 							router.push({
 								name: 'materialReceiptEdit',
+								query: { returnTo: 'diadocDocuments' },
 								params: {
 									id: String(
 										document.material_receipt_id,
