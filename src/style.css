@@ -26,6 +26,10 @@ body {
 	color: rgb(22 78 99);
 }
 
+input.crud-reference-input--unselected {
+	color: #dc2626;
+}
+
 .compact-form-page,
 .compact-form {
 	font-size: 0.8125rem;

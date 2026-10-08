@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import Checkbox from "primevue/checkbox";
@@ -20,6 +21,7 @@ import type { MaterialNew } from "@/types/material.gen";
 import type { MaterialList } from "@/types/materialList.gen";
 
 import { measureUnitReference } from "@/references/inventoryReferences";
+import { diadocMeasureUnitReference } from "@/references/diadocMaterialReferences";
 
 type FormMode = "create" | "edit" | "copy";
 type MaterialFormInput = Partial<MaterialFormModel> & {
@@ -34,6 +36,7 @@ const props = withDefaults(
 		errors?: FormErrorsView;
 		submitting?: boolean;
 		showActive?: boolean;
+		allowReferenceCreate?: boolean;
 	}>(),
 	{
 		model: () => ({}),
@@ -41,6 +44,7 @@ const props = withDefaults(
 		errors: undefined,
 		submitting: false,
 		showActive: true,
+		allowReferenceCreate: false,
 	},
 );
 
@@ -54,6 +58,12 @@ const { form } = useCollectionFormModel<MaterialFormModel>({
 	model: () => props.model,
 	defaults: createMaterialFormModel,
 });
+
+const measureUnitInputReference = computed(() =>
+	props.allowReferenceCreate
+		? diadocMeasureUnitReference
+		: measureUnitReference,
+);
 
 const submit = (): void => {
 	emit("submit", {
@@ -120,9 +130,12 @@ const submit = (): void => {
 			>
 				<ReferenceKeyInput
 					id="materialMeasureUnit"
-					:projectedValue="props.model.measure_unit"
+					:projectedValue="
+						props.model.measure_unit
+					"
 					v-model="form.measure_unit_id"
-					:reference="measureUnitReference"
+					:reference="measureUnitInputReference"
+					:showClear="false"
 					:invalid="invalid"
 					class="w-full min-w-0"
 					required
@@ -156,18 +169,27 @@ const submit = (): void => {
 					containerClass="pt-7"
 				>
 					<template #default="{ invalid }">
-						<div class="flex items-center gap-2">
+						<div
+							class="flex items-center gap-2"
+						>
 							<Checkbox
-								v-model="form.is_active"
+								v-model="
+									form.is_active
+								"
 								inputId="materialIsActive"
-								:invalid="invalid"
+								:invalid="
+									invalid
+								"
 								binary
 							/>
-							<label for="materialIsActive">{{
-								t(
-									"Material.fields.is_active",
-								)
-							}}</label>
+							<label
+								for="materialIsActive"
+								>{{
+									t(
+										"Material.fields.is_active",
+									)
+								}}</label
+							>
 						</div>
 					</template>
 				</FormField>

@@ -221,6 +221,7 @@ defineExpose({
 			:errors="materialErrors"
 			:submitting="materialSubmitting"
 			:showActive="false"
+			allowReferenceCreate
 			@submit="createMaterial"
 			@cancel="materialVisible = false"
 		/>
