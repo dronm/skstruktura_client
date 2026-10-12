@@ -419,9 +419,9 @@ watch(
 </script>
 
 <template>
-	<div class="w-full max-w-4xl">
+	<div class="status-panel w-full min-w-0 max-w-4xl">
 		<nav
-			class="mb-4 flex gap-1 border-b border-slate-200"
+			class="status-tabs mb-4 flex gap-1 border-b border-slate-200"
 			role="tablist"
 			:aria-label="
 				t('ConstructionManagerWorkspace.tabs.status')
@@ -476,7 +476,7 @@ watch(
 		</nav>
 
 		<div
-			class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2"
+			class="status-filter mb-3 flex min-w-0 flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2"
 		>
 			<label
 				for="constructionManagerStatusMaterialType"
@@ -504,12 +504,26 @@ watch(
 					historyTypesLoading ||
 					submitting
 				"
+				:pt="{
+					overlay: {
+						style: {
+							maxWidth: 'calc(100vw - 2rem)',
+						},
+					},
+					optionLabel: {
+						style: {
+							whiteSpace: 'normal',
+							overflowWrap:
+								'anywhere',
+						},
+					},
+				}"
 				showClear
-				class="w-full sm:w-72"
+				class="status-filter-select w-full min-w-0 max-w-full sm:w-72"
 			/>
 			<div
 				v-if="historyTypesError"
-				class="flex basis-full items-center justify-between gap-3 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800"
+				class="status-notice flex basis-full items-center justify-between gap-3 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800"
 				role="alert"
 			>
 				<span>
@@ -551,7 +565,7 @@ watch(
 
 			<div
 				v-if="loadError"
-				class="mb-3 flex items-center justify-between gap-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
+				class="status-notice mb-3 flex items-center justify-between gap-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
 				role="alert"
 			>
 				<span>{{ loadError }}</span>
@@ -592,9 +606,12 @@ watch(
 						)
 					}}
 				</div>
-				<div v-else class="overflow-x-auto">
+				<div
+					v-else
+					class="status-current-table-container"
+				>
 					<table
-						class="w-full min-w-[34rem] table-fixed"
+						class="status-current-table w-full table-fixed"
 					>
 						<thead class="bg-slate-100">
 							<tr>
@@ -610,7 +627,7 @@ watch(
 								</th>
 								<th
 									scope="col"
-									class="w-52 px-4 py-2.5 text-center text-sm font-semibold text-slate-700"
+									class="status-current-heading px-4 py-2.5 text-center text-sm font-semibold text-slate-700"
 								>
 									{{
 										t(
@@ -636,18 +653,18 @@ watch(
 								"
 							>
 								<td
-									class="px-4 py-3 text-sm font-medium text-slate-800"
+									class="status-current-material px-4 py-3 text-sm font-medium text-slate-800"
 								>
 									{{
 										row.material_name
 									}}
 								</td>
 								<td
-									class="px-4 py-2 text-center"
+									class="status-current-control px-4 py-2 text-center"
 								>
 									<button
 										type="button"
-										class="inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+										class="status-current-button inline-flex min-h-9 items-center rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
 										:class="
 											statusPillClass(
 												row.status,
@@ -710,6 +727,7 @@ watch(
 		</div>
 
 		<Dialog
+			class="status-dialog"
 			v-model:visible="dialogVisible"
 			modal
 			:header="
@@ -728,7 +746,7 @@ watch(
 			<div v-if="selectedRow !== null" class="space-y-4">
 				<div
 					v-if="dialogError"
-					class="flex items-center justify-between gap-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
+					class="status-notice flex items-center justify-between gap-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
 					role="alert"
 				>
 					<span>{{ dialogError }}</span>
@@ -751,7 +769,7 @@ watch(
 				</div>
 
 				<div
-					class="grid grid-cols-[minmax(8rem,auto)_minmax(0,1fr)] items-center gap-x-4 gap-y-3 rounded-lg bg-slate-50 p-4 text-sm"
+					class="status-dialog-details grid grid-cols-[minmax(8rem,auto)_minmax(0,1fr)] items-center gap-x-4 gap-y-3 rounded-lg bg-slate-50 p-4 text-sm"
 				>
 					<div class="text-slate-500">
 						{{
@@ -829,6 +847,7 @@ watch(
 						}}
 					</label>
 					<DocumentDateTimePicker
+						class="status-date-picker w-full min-w-0"
 						inputId="constructionManagerStatusDate"
 						v-model="changeDate"
 						:disabled="
@@ -865,3 +884,117 @@ watch(
 		</Dialog>
 	</div>
 </template>
+
+<style scoped>
+.status-panel,
+.status-current-table-container {
+	max-width: 100%;
+	min-width: 0;
+}
+
+.status-current-heading {
+	width: 12rem;
+}
+
+.status-current-material,
+.status-panel [role="status"] {
+	overflow-wrap: anywhere;
+}
+
+.status-current-button {
+	justify-content: center;
+	max-width: 100%;
+	white-space: normal;
+}
+
+.status-notice {
+	flex-wrap: wrap;
+}
+
+.status-notice > span {
+	flex: 1 1 10rem;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.status-notice > button {
+	max-width: 100%;
+	white-space: normal;
+}
+
+.status-filter-select :deep(.p-select-label),
+.status-date-picker :deep(.p-datepicker-input) {
+	min-width: 0;
+}
+
+.status-dialog :deep(.p-dialog-content),
+.status-dialog-details > div {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.status-dialog :deep(.p-dialog-footer) {
+	flex-wrap: wrap;
+}
+
+.status-dialog :deep(.p-button) {
+	max-width: 100%;
+	white-space: normal;
+}
+
+@media (max-width: 639px) {
+	.status-tabs {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.status-tabs > button {
+		min-width: 0;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		overflow-wrap: anywhere;
+	}
+
+	.status-current-table,
+	.status-current-table tbody {
+		display: block;
+		width: 100%;
+	}
+
+	.status-current-table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+
+	.status-current-table tbody > tr {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0.5rem;
+		padding: 0.75rem;
+	}
+
+	.status-current-table td {
+		display: block;
+		min-width: 0;
+		padding: 0 !important;
+	}
+
+	.status-current-control {
+		text-align: left;
+	}
+
+	.status-dialog-details {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0.375rem;
+	}
+
+	.status-dialog-details > div:nth-child(even) {
+		margin-bottom: 0.5rem;
+	}
+}
+</style>

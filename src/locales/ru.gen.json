@@ -1,10 +1,38 @@
 {
+	"BuildingElement": {
+		"title": "Конструкции",
+		"fields": {
+			"id": "ID",
+			"is_active": "Активна",
+			"name": "Наименование"
+		},
+		"form": {
+			"create": "Конструкции",
+			"edit": "Конструкции",
+			"copy": "Конструкции"
+		}
+	},
+	"ConcreteType": {
+		"title": "Марки бетона",
+		"fields": {
+			"id": "ID",
+			"is_active": "Активна",
+			"name": "Наименование",
+			"strength_class": "Класс прочности"
+		},
+		"form": {
+			"create": "Марки бетона",
+			"edit": "Марки бетона",
+			"copy": "Марки бетона"
+		}
+	},
 	"ConstructionSite": {
 		"title": "Объекты строительства",
 		"fields": {
 			"id": "ID",
 			"is_active": "Активна",
-			"name": "Наименование"
+			"name": "Наименование",
+			"section_cnt": "Секций"
 		},
 		"form": {
 			"create": "Новый объект строительства",
@@ -28,6 +56,32 @@
 			"copy": "Копия контакта"
 		}
 	},
+	"DowntimeReason": {
+		"title": "Причины простоя",
+		"fields": {
+			"id": "ID",
+			"is_active": "Активна",
+			"name": "Наименование"
+		},
+		"form": {
+			"create": "Причины простоя",
+			"edit": "Причины простоя",
+			"copy": "Причины простоя"
+		}
+	},
+	"Elevation": {
+		"title": "Высотные отметки",
+		"fields": {
+			"id": "ID",
+			"is_active": "Активна",
+			"value_m": "Отметка, м"
+		},
+		"form": {
+			"create": "Высотные отметки",
+			"edit": "Высотные отметки",
+			"copy": "Высотные отметки"
+		}
+	},
 	"EmployeePost": {
 		"title": "Должности",
 		"fields": {
@@ -39,6 +93,21 @@
 			"create": "Должности",
 			"edit": "Должности",
 			"copy": "Должности"
+		}
+	},
+	"GridAxis": {
+		"title": "Оси",
+		"fields": {
+			"id": "ID",
+			"is_active": "Активна",
+			"kind": "Тип оси",
+			"name": "Наименование",
+			"sort_order": "Порядок"
+		},
+		"form": {
+			"create": "Оси",
+			"edit": "Оси",
+			"copy": "Оси"
 		}
 	},
 	"Material": {
@@ -63,8 +132,7 @@
 			"comment": "Комментарий",
 			"construction_site_id": "Объект строительства",
 			"date": "Дата",
-			"id": "ID",
-			"status_id": "Статус"
+			"id": "ID"
 		},
 		"form": {
 			"create": "Новое списание материалов",
@@ -95,7 +163,8 @@
 			"construction_manager_id": "Ответственный прораб",
 			"construction_site_id": "Объект строительства",
 			"date": "Дата",
-			"id": "ID"
+			"id": "ID",
+			"status_id": "Статус"
 		},
 		"form": {
 			"create": "Новая заявка на материалы",
@@ -227,12 +296,26 @@
 			"is_active": "Активна",
 			"kpp": "КПП",
 			"name": "Наименование",
-			"name_full": "Полн. наименование"
+			"name_full": "Полн. наименование",
+			"provides_concrete": "Поставщик бетона"
 		},
 		"form": {
 			"create": "Новый поставщик",
 			"edit": "Поставщик",
 			"copy": "Копия поставщик"
+		}
+	},
+	"Work": {
+		"title": "Работы",
+		"fields": {
+			"id": "ID",
+			"is_active": "Активна",
+			"name": "Наименование"
+		},
+		"form": {
+			"create": "Работы",
+			"edit": "Работы",
+			"copy": "Работы"
 		}
 	},
 	"MaterialStatusType": {

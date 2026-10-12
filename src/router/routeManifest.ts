@@ -24,6 +24,12 @@ const InventoryValuationPage = () =>
 	import("@/views/inventoryValuation/InventoryValuationPage.vue");
 const ConstructionManagerWorkspace = () =>
 	import("@/views/constructionManager/ConstructionManagerWorkspace.vue");
+const ConcreteWorkLogPage = () =>
+	import("@/views/concreteWorkLog/ConcreteWorkLogPage.vue");
+const ConcreteHeatingLogPage = () =>
+	import("@/views/concreteHeatingLog/ConcreteHeatingLogPage.vue");
+const ConstructionWorkLogPage = () =>
+	import("@/views/constructionWorkLog/ConstructionWorkLogPage.vue");
 const SupplyManagerWorkspace = () =>
 	import("@/views/supplyManager/SupplyManagerWorkspace.vue");
 const MaterialDocumentPrintPage = () =>
@@ -53,6 +59,54 @@ const defineRoute = (
 };
 
 const manualRouteManifest: RouteManifestEntry[] = [
+	defineRoute(
+		{
+			path: "/construction-work-logs",
+			name: "constructionWorkLogs",
+			component: ConstructionWorkLogPage,
+			meta: {
+				roleIds: ["admin", "construction_site_manager"],
+			},
+		},
+		{
+			descr: "Общий журнал работ",
+			section: "Журналы",
+			icon: "pi pi-book",
+			menu_available: true,
+		},
+	),
+	defineRoute(
+		{
+			path: "/concrete-heating-logs",
+			name: "concreteHeatingLogs",
+			component: ConcreteHeatingLogPage,
+			meta: {
+				roleIds: ["admin", "construction_site_manager"],
+			},
+		},
+		{
+			descr: "Журнал прогрева бетона",
+			section: "Журналы",
+			icon: "pi pi-book",
+			menu_available: true,
+		},
+	),
+	defineRoute(
+		{
+			path: "/concrete-work-logs",
+			name: "concreteWorkLogs",
+			component: ConcreteWorkLogPage,
+			meta: {
+				roleIds: ["admin", "construction_site_manager"],
+			},
+		},
+		{
+			descr: "Журнал бетонных работ",
+			section: "Журналы",
+			icon: "pi pi-book",
+			menu_available: true,
+		},
+	),
 	defineRoute(
 		{
 			path: "/",

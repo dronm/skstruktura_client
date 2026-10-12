@@ -80,7 +80,7 @@ watch(
 </script>
 
 <template>
-	<div class="w-full max-w-5xl">
+	<div class="min-w-0 w-full max-w-5xl wrap-anywhere">
 		<ReportContainer
 			:title="t('MaterialBalance.title')"
 			:sheetName="t('MaterialBalance.sheetName')"
@@ -130,6 +130,7 @@ watch(
 				:loading="loading"
 				:error="error"
 				:emptyText="t('MaterialBalance.empty')"
+				fitWidth
 			/>
 		</ReportContainer>
 	</div>

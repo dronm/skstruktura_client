@@ -61,6 +61,7 @@ const submit = (): void => {
 		name_full: form.value.name_full?.trim() ?? "",
 		inn: form.value.inn?.trim() ?? "",
 		kpp: kpp === "" ? null : kpp,
+		provides_concrete: form.value.provides_concrete ?? false,
 		is_active: form.value.is_active ?? false,
 	});
 };
@@ -140,6 +141,28 @@ const submit = (): void => {
 					class="w-full min-w-0"
 				/>
 			</FormField>
+
+			<FormField
+				field="provides_concrete"
+				:errors="props.errors"
+			>
+				<template #default="{ invalid }">
+					<div class="flex items-center gap-2">
+						<Checkbox
+							v-model="form.provides_concrete"
+							inputId="supplierProvidesConcrete"
+							:invalid="invalid"
+							binary
+						/>
+						<label for="supplierProvidesConcrete">{{
+							t(
+								"Supplier.fields.provides_concrete",
+							)
+						}}</label>
+					</div>
+				</template>
+			</FormField>
+
 			<div class="catalog-form-active">
 				<FormField
 					field="is_active"

@@ -12,10 +12,14 @@ export interface MaterialRequestStatus {
 	name: string;
 }
 
-export type MaterialRequestStatusKey = Pick<MaterialRequestStatus, "id">;
-export type MaterialRequestStatusUpd = Partial<
-	Pick<MaterialRequestStatus, "name">
+export type MaterialRequestStatusKey = Pick<
+	MaterialRequestStatus,
+	"id"
 >;
+export type MaterialRequestStatusUpd = Partial<Pick<
+	MaterialRequestStatus,
+	"name"
+>>;
 
 export interface MaterialRequestStatusUpdate {
 	key: MaterialRequestStatusKey;

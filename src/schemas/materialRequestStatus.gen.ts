@@ -2,16 +2,15 @@
 
 import * as v from "valibot";
 
-import {
-	createCommonSchemas,
-	defaultTranslate,
-	type TranslateFn,
-} from "@/schemas/common";
+import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
 import type { MaterialRequestStatus } from "@/types/materialRequestStatus.gen";
 
 export const createMaterialRequestStatusSchemas = (t: TranslateFn) => {
-	const { RequiredStringSchema, RequiredTextSchema, IdSchema } =
-		createCommonSchemas(t);
+	const {
+		RequiredStringSchema,
+		RequiredTextSchema,
+		IdSchema,
+	} = createCommonSchemas(t);
 
 	const MaterialRequestStatusDTOSchema = v.object({
 		id: IdSchema,
@@ -27,11 +26,16 @@ export const createMaterialRequestStatusSchemas = (t: TranslateFn) => {
 
 	const MaterialRequestStatusKeySchema = v.pick(
 		MaterialRequestStatusSchema,
-		["id"],
+		[
+			"id",
+		],
 	);
-	const MaterialRequestStatusUpdSchema = v.partial(
-		v.pick(MaterialRequestStatusSchema, ["name"]),
-	);
+	const MaterialRequestStatusUpdSchema = v.partial(v.pick(
+		MaterialRequestStatusSchema,
+		[
+			"name",
+		],
+	));
 
 	const MaterialRequestStatusUpdateSchema = v.object({
 		key: MaterialRequestStatusKeySchema,
@@ -46,19 +50,13 @@ export const createMaterialRequestStatusSchemas = (t: TranslateFn) => {
 	};
 };
 
-const materialRequestStatusSchemas =
-	createMaterialRequestStatusSchemas(defaultTranslate);
+const materialRequestStatusSchemas = createMaterialRequestStatusSchemas(defaultTranslate);
 
-export const MaterialRequestStatusDTOSchema =
-	materialRequestStatusSchemas.MaterialRequestStatusDTOSchema;
-export const MaterialRequestStatusSchema =
-	materialRequestStatusSchemas.MaterialRequestStatusSchema;
-export const MaterialRequestStatusKeySchema =
-	materialRequestStatusSchemas.MaterialRequestStatusKeySchema;
-export const MaterialRequestStatusUpdSchema =
-	materialRequestStatusSchemas.MaterialRequestStatusUpdSchema;
-export const MaterialRequestStatusUpdateSchema =
-	materialRequestStatusSchemas.MaterialRequestStatusUpdateSchema;
+export const MaterialRequestStatusDTOSchema = materialRequestStatusSchemas.MaterialRequestStatusDTOSchema;
+export const MaterialRequestStatusSchema = materialRequestStatusSchemas.MaterialRequestStatusSchema;
+export const MaterialRequestStatusKeySchema = materialRequestStatusSchemas.MaterialRequestStatusKeySchema;
+export const MaterialRequestStatusUpdSchema = materialRequestStatusSchemas.MaterialRequestStatusUpdSchema;
+export const MaterialRequestStatusUpdateSchema = materialRequestStatusSchemas.MaterialRequestStatusUpdateSchema;
 
 export const materialRequestStatusFromDTO = (
 	dto: unknown,

@@ -3,12 +3,14 @@
 export interface ConstructionSiteDTO {
 	id: number;
 	name: string;
+	section_cnt: number;
 	is_active: boolean;
 }
 
 export interface ConstructionSite {
 	id: number;
 	name: string;
+	section_cnt: number;
 	is_active: boolean;
 }
 
@@ -18,11 +20,11 @@ export type ConstructionSiteKey = Pick<
 >;
 export type ConstructionSiteNew = Pick<
 	ConstructionSite,
-	"name" | "is_active"
+	"name" | "section_cnt" | "is_active"
 >;
 export type ConstructionSiteUpd = Partial<Pick<
 	ConstructionSite,
-	"name" | "is_active"
+	"name" | "section_cnt" | "is_active"
 >>;
 
 export interface ConstructionSiteUpdate {

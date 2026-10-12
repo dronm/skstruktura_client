@@ -31,10 +31,14 @@ defineSlots<{
 
 <template>
 	<aside
-		class="rounded-lg border border-slate-200 bg-white p-4 xl:sticky xl:top-4 xl:self-start"
+		class="min-w-0 wrap-anywhere rounded-lg border border-slate-200 bg-white p-4 xl:sticky xl:top-4 xl:self-start"
 	>
-		<div class="mb-3 flex items-baseline justify-between gap-3">
-			<h2 class="text-base font-semibold text-slate-900">
+		<div
+			class="mb-3 flex flex-wrap items-baseline justify-between gap-3"
+		>
+			<h2
+				class="min-w-0 text-base font-semibold text-slate-900"
+			>
 				{{ props.title }}
 			</h2>
 			<span class="text-xs text-slate-500">

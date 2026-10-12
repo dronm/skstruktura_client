@@ -3,6 +3,7 @@
 export interface SupplierDTO {
 	id: number;
 	name: string;
+	provides_concrete: boolean;
 	name_full: string;
 	inn: string;
 	kpp: string | null;
@@ -12,6 +13,7 @@ export interface SupplierDTO {
 export interface Supplier {
 	id: number;
 	name: string;
+	provides_concrete: boolean;
 	name_full: string;
 	inn: string;
 	kpp: string | null;
@@ -24,11 +26,11 @@ export type SupplierKey = Pick<
 >;
 export type SupplierNew = Pick<
 	Supplier,
-	"name" | "name_full" | "inn" | "kpp" | "is_active"
+	"name" | "provides_concrete" | "name_full" | "inn" | "kpp" | "is_active"
 >;
 export type SupplierUpd = Partial<Pick<
 	Supplier,
-	"name" | "name_full" | "inn" | "kpp" | "is_active"
+	"name" | "provides_concrete" | "name_full" | "inn" | "kpp" | "is_active"
 >>;
 
 export interface SupplierUpdate {

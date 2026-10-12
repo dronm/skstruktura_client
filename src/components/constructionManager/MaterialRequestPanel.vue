@@ -572,11 +572,11 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="w-full max-w-6xl">
+	<div class="min-w-0 w-full max-w-6xl">
 		<ConfirmDialog />
 
 		<nav
-			class="mb-4 flex gap-1 border-b border-slate-200"
+			class="mb-4 flex flex-wrap gap-1 border-b border-slate-200"
 			role="tablist"
 			:aria-label="
 				t('ConstructionManagerWorkspace.tabs.request')
@@ -680,6 +680,7 @@ onMounted(() => {
 					}}
 				</label>
 				<Select
+					overlayClass="construction-manager-select-overlay"
 					inputId="constructionManagerMaterialType"
 					v-model="selectedMaterialTypeID"
 					:options="materialTypeOptions"
@@ -736,11 +737,11 @@ onMounted(() => {
 						)
 					"
 					:extraColumnCount="2"
-					minWidth="50rem"
+					fitWidth
 				>
 					<template #extra-headers>
 						<th
-							class="w-28 px-1.5 py-2 text-right font-semibold text-slate-700"
+							class="material-workbench-quantity px-1.5 py-2 text-right font-semibold text-slate-700"
 						>
 							{{
 								t(
@@ -749,7 +750,7 @@ onMounted(() => {
 							}}
 						</th>
 						<th
-							class="w-52 px-2 py-2 text-left font-semibold text-slate-700"
+							class="material-workbench-importance px-2 py-2 text-left font-semibold text-slate-700"
 						>
 							{{
 								t(
@@ -759,8 +760,30 @@ onMounted(() => {
 						</th>
 					</template>
 					<template #extra-cells="{ row }">
-						<td class="w-28 px-1.5 py-1.5">
+						<td
+							class="material-workbench-quantity px-1.5 py-1.5"
+							:data-label="
+								t(
+									'ConstructionManagerWorkspace.grid.quantity',
+								)
+							"
+						>
 							<InputNumber
+								:pt="{
+									pcInputText:
+										{
+											root: {
+												inputmode: 'decimal',
+											},
+										},
+								}"
+								:aria-label="
+									t(
+										'ConstructionManagerWorkspace.grid.quantity',
+									) +
+									': ' +
+									row.materialName
+								"
 								:modelValue="
 									ensureLine(
 										row.materialID,
@@ -778,15 +801,15 @@ onMounted(() => {
 								"
 								size="small"
 								showButtons
-								buttonLayout="horizontal"
-								incrementButtonClass="!w-7"
-								decrementButtonClass="!w-7"
+								buttonLayout="stacked"
+								incrementIcon="pi pi-plus"
+								decrementIcon="pi pi-minus"
 								:step="1"
 								:disabled="
 									inputsDisabled
 								"
-								inputClass="h-9 min-w-0 text-right tabular-nums"
-								class="h-9 w-28"
+								inputClass="h-9 w-full min-w-0 text-right tabular-nums"
+								class="h-9 w-full min-w-0"
 								@update:modelValue="
 									setQuantity(
 										row.materialID,
@@ -795,8 +818,23 @@ onMounted(() => {
 								"
 							/>
 						</td>
-						<td class="px-2 py-1.5">
+						<td
+							class="material-workbench-importance px-2 py-1.5"
+							:data-label="
+								t(
+									'ConstructionManagerWorkspace.grid.importance',
+								)
+							"
+						>
 							<Select
+								overlayClass="construction-manager-select-overlay"
+								:aria-label="
+									t(
+										'ConstructionManagerWorkspace.grid.importance',
+									) +
+									': ' +
+									row.materialName
+								"
 								:modelValue="
 									ensureLine(
 										row.materialID,
@@ -858,7 +896,9 @@ onMounted(() => {
 						:key="item.row.materialID"
 						class="grid grid-cols-[minmax(0,1fr)_auto] gap-3 py-3 text-sm"
 					>
-						<div class="min-w-0">
+						<div
+							class="min-w-0 wrap-anywhere"
+						>
 							<div
 								class="font-medium text-slate-800"
 							>
@@ -889,7 +929,7 @@ onMounted(() => {
 							</div>
 						</div>
 						<div
-							class="whitespace-nowrap text-right font-medium tabular-nums text-slate-900"
+							class="min-w-0 max-w-28 wrap-anywhere text-right font-medium tabular-nums text-slate-900"
 						>
 							{{
 								formatNumber(

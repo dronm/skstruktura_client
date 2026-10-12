@@ -9,6 +9,9 @@ import MaterialConsumptionPanel from "@/components/constructionManager/MaterialC
 import MaterialRequestPanel from "@/components/constructionManager/MaterialRequestPanel.vue";
 import MaterialStatusPanel from "@/components/constructionManager/MaterialStatusPanel.vue";
 import MaterialTransferPanel from "@/components/constructionManager/MaterialTransferPanel.vue";
+import ConcreteWorkLogPanel from "@/components/concreteWorkLog/ConcreteWorkLogPanel.vue";
+import ConcreteHeatingLogPanel from "@/components/concreteHeatingLog/ConcreteHeatingLogPanel.vue";
+import ConstructionWorkLogPanel from "@/components/constructionWorkLog/ConstructionWorkLogPanel.vue";
 import { provideConstructionManagerSiteContext } from "@/composables/useConstructionManagerSiteContext";
 
 type WorkspaceTab =
@@ -16,7 +19,10 @@ type WorkspaceTab =
 	| "request"
 	| "consumption"
 	| "transfer"
-	| "status";
+	| "status"
+	| "workLog"
+	| "heatingLog"
+	| "concreteLog";
 
 const { t } = useI18n();
 const siteContext = provideConstructionManagerSiteContext();
@@ -25,10 +31,16 @@ const requestVisited = ref(false);
 const consumptionVisited = ref(false);
 const transferVisited = ref(false);
 const statusVisited = ref(false);
+const workLogVisited = ref(false);
+const heatingLogVisited = ref(false);
+const concreteLogVisited = ref(false);
 const requestSubmitting = ref(false);
 const consumptionSubmitting = ref(false);
 const transferSubmitting = ref(false);
 const statusSubmitting = ref(false);
+const workLogSubmitting = ref(false);
+const heatingLogSubmitting = ref(false);
+const concreteLogSubmitting = ref(false);
 const inventoryRevision = ref(0);
 
 const selectTab = (tab: WorkspaceTab): void => {
@@ -41,6 +53,12 @@ const selectTab = (tab: WorkspaceTab): void => {
 		transferVisited.value = true;
 	} else if (tab === "status") {
 		statusVisited.value = true;
+	} else if (tab === "workLog") {
+		workLogVisited.value = true;
+	} else if (tab === "heatingLog") {
+		heatingLogVisited.value = true;
+	} else if (tab === "concreteLog") {
+		concreteLogVisited.value = true;
 	}
 };
 
@@ -49,7 +67,10 @@ const selectConstructionSite = (constructionSiteID: number | null): void => {
 		!requestSubmitting.value &&
 		!consumptionSubmitting.value &&
 		!transferSubmitting.value &&
-		!statusSubmitting.value
+		!statusSubmitting.value &&
+		!workLogSubmitting.value &&
+		!heatingLogSubmitting.value &&
+		!concreteLogSubmitting.value
 	) {
 		siteContext.select(constructionSiteID);
 	}
@@ -65,7 +86,9 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="mx-auto w-full max-w-7xl space-y-4">
+	<div
+		class="construction-manager-workspace mx-auto min-w-0 w-full max-w-7xl space-y-4"
+	>
 		<section
 			class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
 		>
@@ -88,7 +111,7 @@ onMounted(() => {
 								.value
 						"
 						id="constructionManagerSite"
-						class="flex min-h-10 items-center rounded-md border border-slate-300 bg-slate-50 px-3 py-2 font-medium text-slate-800"
+						class="flex min-h-10 items-center wrap-anywhere rounded-md border border-slate-300 bg-slate-50 px-3 py-2 font-medium text-slate-800"
 					>
 						{{
 							siteContext
@@ -97,6 +120,7 @@ onMounted(() => {
 						}}
 					</div>
 					<Select
+						overlayClass="construction-manager-select-overlay"
 						v-else
 						inputId="constructionManagerSite"
 						:modelValue="
@@ -127,6 +151,9 @@ onMounted(() => {
 							consumptionSubmitting ||
 							transferSubmitting ||
 							statusSubmitting ||
+							workLogSubmitting ||
+							heatingLogSubmitting ||
+							concreteLogSubmitting ||
 							siteContext
 								.constructionSites
 								.value
@@ -165,8 +192,8 @@ onMounted(() => {
 		</section>
 
 		<nav
-			class="flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-2 shadow-sm"
-			aria-label="Операции с материалами"
+			class="flex flex-wrap gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-sm"
+			aria-label="Рабочее место прораба"
 		>
 			<button
 				type="button"
@@ -273,6 +300,60 @@ onMounted(() => {
 					)
 				}}
 			</button>
+			<button
+				type="button"
+				class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+				:class="
+					activeTab === 'workLog'
+						? 'bg-cyan-700 text-white'
+						: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+				"
+				:aria-selected="activeTab === 'workLog'"
+				@click="selectTab('workLog')"
+			>
+				<i class="pi pi-book mr-2" aria-hidden="true" />
+				{{
+					t(
+						"ConstructionManagerWorkspace.tabs.workLog",
+					)
+				}}
+			</button>
+			<button
+				type="button"
+				class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+				:class="
+					activeTab === 'heatingLog'
+						? 'bg-cyan-700 text-white'
+						: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+				"
+				:aria-selected="activeTab === 'heatingLog'"
+				@click="selectTab('heatingLog')"
+			>
+				<i class="pi pi-book mr-2" aria-hidden="true" />
+				{{
+					t(
+						"ConstructionManagerWorkspace.tabs.heatingLog",
+					)
+				}}
+			</button>
+			<button
+				type="button"
+				class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+				:class="
+					activeTab === 'concreteLog'
+						? 'bg-cyan-700 text-white'
+						: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+				"
+				:aria-selected="activeTab === 'concreteLog'"
+				@click="selectTab('concreteLog')"
+			>
+				<i class="pi pi-book mr-2" aria-hidden="true" />
+				{{
+					t(
+						"ConstructionManagerWorkspace.tabs.concreteLog",
+					)
+				}}
+			</button>
 		</nav>
 
 		<section
@@ -347,6 +428,63 @@ onMounted(() => {
 				:inventoryRevision="inventoryRevision"
 				@submitting-change="statusSubmitting = $event"
 			/>
+			<ConstructionWorkLogPanel
+				v-if="workLogVisited"
+				v-show="activeTab === 'workLog'"
+				:site="
+					siteContext.selectedConstructionSite
+						.value
+				"
+				embedded
+				@submitting-change="workLogSubmitting = $event"
+			/>
+			<ConcreteHeatingLogPanel
+				v-if="heatingLogVisited"
+				v-show="activeTab === 'heatingLog'"
+				:site="
+					siteContext.selectedConstructionSite
+						.value
+				"
+				embedded
+				@submitting-change="
+					heatingLogSubmitting = $event
+				"
+			/>
+			<ConcreteWorkLogPanel
+				v-if="concreteLogVisited"
+				v-show="activeTab === 'concreteLog'"
+				:site="
+					siteContext.selectedConstructionSite
+						.value
+				"
+				embedded
+				@submitting-change="
+					concreteLogSubmitting = $event
+				"
+			/>
 		</section>
 	</div>
 </template>
+
+<style scoped>
+.construction-manager-workspace :deep(.p-select) {
+	min-width: 0;
+	max-width: 100%;
+}
+
+.construction-manager-workspace :deep(.p-select-label) {
+	min-width: 0;
+}
+
+/* Select overlays are teleported outside the workspace root. */
+:global(.construction-manager-select-overlay) {
+	max-width: calc(100vw - 1rem);
+}
+
+:global(.construction-manager-select-overlay .p-select-option),
+:global(.construction-manager-select-overlay .p-select-option-label) {
+	min-width: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+</style>

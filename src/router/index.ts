@@ -27,6 +27,13 @@ router.beforeEach((to) => {
 	if (requiredRoleId && authStore.user?.role_id !== requiredRoleId) {
 		return { name: "main" };
 	}
+	const requiredRoleIds = to.meta.roleIds;
+	if (
+		Array.isArray(requiredRoleIds) &&
+		!requiredRoleIds.includes(authStore.user?.role_id)
+	) {
+		return { name: "main" };
+	}
 
 	return true;
 });

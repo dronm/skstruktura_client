@@ -16,6 +16,7 @@ export const createSupplierSchemas = (t: TranslateFn) => {
 	const SupplierDTOSchema = v.object({
 		id: IdSchema,
 		name: RequiredStringSchema,
+		provides_concrete: v.boolean(),
 		name_full: RequiredTextSchema,
 		inn: RequiredStringSchema,
 		kpp: v.nullable(StringSchema),
@@ -25,6 +26,7 @@ export const createSupplierSchemas = (t: TranslateFn) => {
 	const SupplierSchema = v.object({
 		id: IdSchema,
 		name: RequiredStringSchema,
+		provides_concrete: v.boolean(),
 		name_full: RequiredTextSchema,
 		inn: RequiredStringSchema,
 		kpp: v.nullable(StringSchema),
@@ -41,6 +43,7 @@ export const createSupplierSchemas = (t: TranslateFn) => {
 		SupplierSchema,
 		[
 			"name",
+			"provides_concrete",
 			"name_full",
 			"inn",
 			"kpp",
@@ -51,6 +54,7 @@ export const createSupplierSchemas = (t: TranslateFn) => {
 		SupplierSchema,
 		[
 			"name",
+			"provides_concrete",
 			"name_full",
 			"inn",
 			"kpp",

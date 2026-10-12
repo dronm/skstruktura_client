@@ -23,6 +23,7 @@ const MaterialBalanceReferenceSchema = v.object({
 const MaterialBalanceConstructionSiteSchema = v.object({
 	id: IdSchema,
 	name: RequiredTextSchema,
+	section_cnt: v.optional(v.pipe(IntSchema, v.minValue(0)), 0),
 });
 
 const MaterialBalanceConstructionSitesSchema = v.union([

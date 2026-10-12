@@ -2,39 +2,40 @@
 
 import * as v from "valibot";
 
+import { createCommonSchemas, defaultTranslate, type TranslateFn } from "@/schemas/common";
 import {
-	createCommonSchemas,
-	defaultTranslate,
-	type TranslateFn,
-} from "@/schemas/common";
-import { createMaterialStatusTypeSchemas } from "@/schemas/enums/materialStatusType.gen";
+	createMaterialStatusTypeSchemas,
+} from "@/schemas/enums/materialStatusType.gen";
 import type { MaterialStatusList } from "@/types/materialStatusList.gen";
 
 export const createMaterialStatusListSchemas = (t: TranslateFn) => {
-	const { DateStringSchema, IdSchema, AttrsSchema } =
-		createCommonSchemas(t);
+	const {
+		DateStringSchema,
+		IdSchema,
+		AttrsSchema,
+	} = createCommonSchemas(t);
 	const { MaterialStatusTypeSchema } = createMaterialStatusTypeSchemas(t);
 
 	const MaterialStatusListDTOSchema = v.object({
 		id: IdSchema,
 		created_at: DateStringSchema,
-		construction_site_id: v.nullable(IdSchema),
-		construction_site: v.nullable(AttrsSchema),
 		material_id: IdSchema,
 		material: AttrsSchema,
 		status: MaterialStatusTypeSchema,
 		is_active: v.boolean(),
+		construction_site_id: v.nullable(IdSchema),
+		construction_site: v.nullable(AttrsSchema),
 	});
 
 	const MaterialStatusListSchema = v.object({
 		id: IdSchema,
 		created_at: v.date(),
-		construction_site_id: v.nullable(IdSchema),
-		construction_site: v.nullable(AttrsSchema),
 		material_id: IdSchema,
 		material: AttrsSchema,
 		status: MaterialStatusTypeSchema,
 		is_active: v.boolean(),
+		construction_site_id: v.nullable(IdSchema),
+		construction_site: v.nullable(AttrsSchema),
 	});
 
 	return {
@@ -43,15 +44,14 @@ export const createMaterialStatusListSchemas = (t: TranslateFn) => {
 	};
 };
 
-const materialStatusListSchemas =
-	createMaterialStatusListSchemas(defaultTranslate);
+const materialStatusListSchemas = createMaterialStatusListSchemas(defaultTranslate);
 
-export const MaterialStatusListDTOSchema =
-	materialStatusListSchemas.MaterialStatusListDTOSchema;
-export const MaterialStatusListSchema =
-	materialStatusListSchemas.MaterialStatusListSchema;
+export const MaterialStatusListDTOSchema = materialStatusListSchemas.MaterialStatusListDTOSchema;
+export const MaterialStatusListSchema = materialStatusListSchemas.MaterialStatusListSchema;
 
-export const materialStatusListFromDTO = (dto: unknown): MaterialStatusList => {
+export const materialStatusListFromDTO = (
+	dto: unknown,
+): MaterialStatusList => {
 	const parsedDTO = v.parse(MaterialStatusListDTOSchema, dto);
 
 	return v.parse(MaterialStatusListSchema, {

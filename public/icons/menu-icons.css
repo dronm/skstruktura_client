@@ -1,0 +1,52 @@
+.pi.pi-custom-concrete-types::before,
+.pi.pi-custom-building-elements::before,
+.pi.pi-custom-works::before {
+	content: "";
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.125em;
+	background-color: currentColor;
+	-webkit-mask: var(--menu-icon) center / contain no-repeat;
+	mask: var(--menu-icon) center / contain no-repeat;
+}
+
+.pi-custom-concrete-types {
+	--menu-icon: url("./concrete_types.svg");
+}
+
+.pi-custom-building-elements {
+	--menu-icon: url("./building-elements.svg");
+}
+
+.pi-custom-works {
+	--menu-icon: url("./works.svg");
+}
+
+.pi-custom-grid-axis {
+	--menu-icon: url("./grid-axis.svg");
+}
+
+.pi-custom-elevations {
+	--menu-icon: url("./elevations.svg");
+}
+
+.pi-custom-construction-sites {
+	--menu-icon: url("./construction-sites.svg");
+}
+
+.pi-custom-employee-posts {
+	--menu-icon: url("./employee-posts.svg");
+}
+
+.pi-custom-materials{
+	--menu-icon: url("./materials.svg");
+}
+
+.pi-custom-suppliers{
+	--menu-icon: url("./suppliers.svg");
+}
+
+.pi-custom-measure-units{
+	--menu-icon: url("./measure-units.svg");
+}

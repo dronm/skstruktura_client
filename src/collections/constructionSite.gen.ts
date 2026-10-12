@@ -49,6 +49,14 @@ export const constructionSiteCollection = defineCollection<
 			width: "32rem",
 		},
 		{
+			field: "section_cnt",
+			headerKey: "ConstructionSite.fields.section_cnt",
+			sortable: true,
+			dataType: "number",
+			align: "right",
+			width: "8rem",
+		},
+		{
 			field: "is_active",
 			headerKey: "ConstructionSite.fields.is_active",
 			sortable: true,

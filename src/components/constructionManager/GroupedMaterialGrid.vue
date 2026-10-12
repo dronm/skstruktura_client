@@ -16,12 +16,14 @@ const props = withDefaults(
 		emptyText: string;
 		extraColumnCount?: number;
 		minWidth?: string;
+		fitWidth?: boolean;
 	}>(),
 	{
 		loading: false,
 		error: "",
 		extraColumnCount: 0,
 		minWidth: "38rem",
+		fitWidth: false,
 	},
 );
 
@@ -77,25 +79,44 @@ const formatNumber = (value: number): string => {
 	<div
 		v-else
 		class="material-workbench-scroll max-h-[62vh] overflow-auto rounded-lg border border-slate-200 bg-white"
+		:class="{
+			'material-workbench-fit': props.fitWidth,
+			'material-workbench-with-importance':
+				props.fitWidth && props.extraColumnCount === 2,
+			'material-workbench-readonly':
+				props.fitWidth && props.extraColumnCount === 0,
+		}"
 	>
 		<table
 			class="w-full border-collapse text-sm"
-			:style="{ minWidth: props.minWidth }"
+			:style="{
+				minWidth: props.fitWidth ? '0' : props.minWidth,
+			}"
 		>
 			<thead class="sticky top-0 z-10 bg-slate-100">
 				<tr>
 					<th
-						class="w-full min-w-72 px-3 py-2 text-left font-semibold text-slate-700"
+						class="material-workbench-name px-3 py-2 text-left font-semibold text-slate-700"
+						:class="{
+							'w-full min-w-72':
+								!props.fitWidth,
+						}"
 					>
 						Материал
 					</th>
 					<th
-						class="w-20 px-2 py-2 text-left font-semibold text-slate-700"
+						class="material-workbench-unit px-2 py-2 text-left font-semibold text-slate-700"
+						:class="{
+							'w-20': !props.fitWidth,
+						}"
 					>
 						Ед.
 					</th>
 					<th
-						class="w-32 px-2 py-2 text-right font-semibold text-slate-700"
+						class="material-workbench-balance px-2 py-2 text-right font-semibold text-slate-700"
+						:class="{
+							'w-32': !props.fitWidth,
+						}"
 					>
 						Остаток
 					</th>
@@ -107,7 +128,9 @@ const formatNumber = (value: number): string => {
 					v-for="group in groups"
 					:key="group.id"
 				>
-					<tr class="bg-sky-100 text-sky-900">
+					<tr
+						class="material-workbench-group bg-sky-100 text-sky-900"
+					>
 						<td
 							:colspan="
 								3 +
@@ -121,22 +144,24 @@ const formatNumber = (value: number): string => {
 					<tr
 						v-for="row in group.rows"
 						:key="row.materialID"
-						class="border-t border-slate-200 align-middle"
+						class="material-workbench-row border-t border-slate-200 align-middle"
 					>
 						<td
-							class="px-3 py-2 text-slate-900"
+							class="material-workbench-name px-3 py-2 text-slate-900"
 						>
 							{{ row.materialName }}
 						</td>
 						<td
-							class="px-2 py-2 text-slate-600"
+							class="material-workbench-unit px-2 py-2 text-slate-600"
+							data-label="Ед."
 						>
 							{{
 								row.measureUnitName
 							}}
 						</td>
 						<td
-							class="px-2 py-2 text-right tabular-nums text-slate-700"
+							class="material-workbench-balance px-2 py-2 text-right tabular-nums text-slate-700"
+							data-label="Остаток"
 						>
 							{{
 								formatNumber(
@@ -150,7 +175,10 @@ const formatNumber = (value: number): string => {
 						/>
 					</tr>
 				</template>
-				<tr v-if="groups.length === 0">
+				<tr
+					v-if="groups.length === 0"
+					class="material-workbench-empty"
+				>
 					<td
 						:colspan="
 							3 +
@@ -167,6 +195,180 @@ const formatNumber = (value: number): string => {
 </template>
 
 <style scoped>
+.material-workbench-fit {
+	container: material-workbench / inline-size;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.material-workbench-fit table {
+	table-layout: fixed;
+}
+
+.material-workbench-fit :deep(th),
+.material-workbench-fit :deep(td) {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.material-workbench-fit .material-workbench-unit {
+	width: 2.5rem;
+}
+
+.material-workbench-fit .material-workbench-balance {
+	width: 5rem;
+}
+
+.material-workbench-fit :deep(.material-workbench-quantity) {
+	width: 4.5rem;
+}
+
+.material-workbench-fit :deep(.material-workbench-importance) {
+	width: 8rem;
+}
+
+.material-workbench-fit :deep(.p-inputnumber),
+.material-workbench-fit :deep(.p-inputnumber-input),
+.material-workbench-fit :deep(.p-select) {
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.material-workbench-fit :deep(.p-inputnumber-input) {
+	padding-inline: 0.3rem !important;
+}
+
+.material-workbench-fit :deep(.p-inputnumber-stacked) {
+	--p-inputnumber-button-width: 1.25rem;
+}
+
+.material-workbench-fit :deep(.p-inputnumber-stacked .p-inputnumber-input) {
+	padding-inline-end: 1.55rem !important;
+}
+
+.material-workbench-fit
+	:deep(.material-workbench-importance .p-select-dropdown) {
+	width: 1.25rem;
+}
+
+.material-workbench-fit
+	:deep(.material-workbench-importance .p-select-clear-icon) {
+	width: 0.625rem;
+	height: 0.625rem;
+	margin-top: -0.3125rem;
+	inset-inline-end: 1.4rem;
+}
+
+.material-workbench-fit :deep(.material-workbench-importance .p-select-label) {
+	padding-inline: 0.2rem !important;
+}
+
+.material-workbench-fit
+	:deep(
+		.material-workbench-importance
+			.p-select:has(.p-select-clear-icon)
+			.p-select-label
+	) {
+	padding-inline-end: 1rem !important;
+}
+
+.material-workbench-fit :deep(.p-select-label) {
+	min-width: 0;
+}
+
+/* Use the available grid width, including when a summary occupies a sidebar. */
+@media screen {
+	@container material-workbench (max-width: 40rem) {
+		.material-workbench-fit table,
+		.material-workbench-fit tbody {
+			display: block;
+			width: 100%;
+		}
+
+		.material-workbench-fit thead {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+
+		.material-workbench-fit .material-workbench-group,
+		.material-workbench-fit .material-workbench-empty {
+			display: block;
+		}
+
+		.material-workbench-fit .material-workbench-group td,
+		.material-workbench-fit .material-workbench-empty td {
+			display: block;
+			width: 100%;
+		}
+
+		.material-workbench-fit .material-workbench-row {
+			display: grid;
+			grid-template-columns: 2.5rem minmax(0, 1fr) 4.5rem;
+			align-items: end;
+			gap: 0.25rem;
+			padding: 0.5rem;
+		}
+
+		.material-workbench-with-importance .material-workbench-row {
+			grid-template-columns:
+				2rem minmax(0, 0.8fr)
+				4.5rem minmax(0, 1.2fr);
+		}
+
+		.material-workbench-readonly .material-workbench-row {
+			grid-template-columns: 2.5rem minmax(0, 1fr);
+		}
+
+		.material-workbench-fit .material-workbench-row :deep(td) {
+			display: block;
+			width: auto;
+			padding: 0 !important;
+		}
+
+		.material-workbench-fit .material-workbench-name {
+			grid-column: 1 / -1;
+			padding-bottom: 0.25rem !important;
+			font-weight: 500;
+		}
+
+		.material-workbench-fit .material-workbench-unit {
+			grid-column: 1;
+		}
+
+		.material-workbench-fit .material-workbench-balance {
+			grid-column: 2;
+			text-align: left;
+		}
+
+		.material-workbench-fit :deep(.material-workbench-quantity) {
+			grid-column: 3;
+		}
+
+		.material-workbench-with-importance
+			:deep(.material-workbench-importance) {
+			grid-column: 4;
+		}
+
+		.material-workbench-fit
+			.material-workbench-row
+			:deep(td[data-label]::before) {
+			content: attr(data-label);
+			display: block;
+			margin-bottom: 0.2rem;
+			color: rgb(100 116 139);
+			font-size: 0.6875rem;
+			line-height: 1rem;
+		}
+	}
+}
+
 @media print {
 	.material-workbench-scroll {
 		max-height: none !important;

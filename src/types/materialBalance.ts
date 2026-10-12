@@ -9,6 +9,7 @@ export interface MaterialBalanceReference {
 export interface MaterialBalanceConstructionSite {
 	id: number;
 	name: string;
+	section_cnt: number;
 }
 
 export interface MaterialBalanceRow {

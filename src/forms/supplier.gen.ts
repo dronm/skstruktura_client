@@ -17,11 +17,13 @@ export const createSupplierFormModel = (): SupplierFormModel => ({
 	name_full: "",
 	inn: "",
 	kpp: null,
+	provides_concrete: false,
 	is_active: true,
 });
 
 export const supplierFormMutationFields = [
 	"name",
+	"provides_concrete",
 	"name_full",
 	"inn",
 	"kpp",

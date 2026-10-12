@@ -444,11 +444,11 @@ watch(
 </script>
 
 <template>
-	<div class="w-full max-w-6xl">
+	<div class="min-w-0 w-full max-w-6xl">
 		<ConfirmDialog :group="confirmGroup" />
 
 		<nav
-			class="mb-4 flex gap-1 border-b border-slate-200"
+			class="mb-4 flex flex-wrap gap-1 border-b border-slate-200"
 			role="tablist"
 			:aria-label="
 				t(
@@ -533,6 +533,7 @@ watch(
 					}}
 				</label>
 				<Select
+					overlayClass="construction-manager-select-overlay"
 					inputId="constructionManagerConsumptionMaterialType"
 					v-model="selectedMaterialTypeID"
 					:options="materialTypeOptions"
@@ -589,11 +590,11 @@ watch(
 						)
 					"
 					:extraColumnCount="1"
-					minWidth="40rem"
+					fitWidth
 				>
 					<template #extra-headers>
 						<th
-							class="w-28 px-1.5 py-2 text-right font-semibold text-slate-700"
+							class="material-workbench-quantity px-1.5 py-2 text-right font-semibold text-slate-700"
 						>
 							{{
 								t(
@@ -603,8 +604,30 @@ watch(
 						</th>
 					</template>
 					<template #extra-cells="{ row }">
-						<td class="w-28 px-1.5 py-1.5">
+						<td
+							class="material-workbench-quantity px-1.5 py-1.5"
+							:data-label="
+								t(
+									'ConstructionManagerWorkspace.grid.quantity',
+								)
+							"
+						>
 							<InputNumber
+								:pt="{
+									pcInputText:
+										{
+											root: {
+												inputmode: 'decimal',
+											},
+										},
+								}"
+								:aria-label="
+									t(
+										'ConstructionManagerWorkspace.grid.quantity',
+									) +
+									': ' +
+									row.materialName
+								"
 								:modelValue="
 									ensureLine(
 										row.materialID,
@@ -622,15 +645,15 @@ watch(
 								"
 								size="small"
 								showButtons
-								buttonLayout="horizontal"
-								incrementButtonClass="!w-7"
-								decrementButtonClass="!w-7"
+								buttonLayout="stacked"
+								incrementIcon="pi pi-plus"
+								decrementIcon="pi pi-minus"
 								:step="1"
 								:disabled="
 									submitting
 								"
-								inputClass="h-9 min-w-0 text-right tabular-nums"
-								class="h-9 w-28"
+								inputClass="h-9 w-full min-w-0 text-right tabular-nums"
+								class="h-9 w-full min-w-0"
 								@update:modelValue="
 									setQuantity(
 										row.materialID,
@@ -678,7 +701,7 @@ watch(
 						class="grid grid-cols-[minmax(0,1fr)_auto] gap-3 py-3 text-sm"
 					>
 						<div
-							class="min-w-0 font-medium text-slate-800"
+							class="min-w-0 wrap-anywhere font-medium text-slate-800"
 						>
 							{{
 								item.row
@@ -686,7 +709,7 @@ watch(
 							}}
 						</div>
 						<div
-							class="whitespace-nowrap text-right font-medium tabular-nums text-slate-900"
+							class="min-w-0 max-w-28 wrap-anywhere text-right font-medium tabular-nums text-slate-900"
 						>
 							{{
 								formatNumber(

@@ -8,18 +8,21 @@ import type { ConstructionSite } from "@/types/constructionSite.gen";
 export const createConstructionSiteSchemas = (t: TranslateFn) => {
 	const {
 		RequiredStringSchema,
+		IntSchema,
 		IdSchema,
 	} = createCommonSchemas(t);
 
 	const ConstructionSiteDTOSchema = v.object({
 		id: IdSchema,
 		name: RequiredStringSchema,
+		section_cnt: IntSchema,
 		is_active: v.boolean(),
 	});
 
 	const ConstructionSiteSchema = v.object({
 		id: IdSchema,
 		name: RequiredStringSchema,
+		section_cnt: IntSchema,
 		is_active: v.boolean(),
 	});
 
@@ -33,6 +36,7 @@ export const createConstructionSiteSchemas = (t: TranslateFn) => {
 		ConstructionSiteSchema,
 		[
 			"name",
+			"section_cnt",
 			"is_active",
 		],
 	);
@@ -40,6 +44,7 @@ export const createConstructionSiteSchemas = (t: TranslateFn) => {
 		ConstructionSiteSchema,
 		[
 			"name",
+			"section_cnt",
 			"is_active",
 		],
 	));

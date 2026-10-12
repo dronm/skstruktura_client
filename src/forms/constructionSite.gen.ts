@@ -14,11 +14,13 @@ export type ConstructionSiteFormModel = {
 
 export const createConstructionSiteFormModel = (): ConstructionSiteFormModel => ({
 	name: "",
+	section_cnt: 0,
 	is_active: true,
 });
 
 export const constructionSiteFormMutationFields = [
 	"name",
+	"section_cnt",
 	"is_active",
 ] satisfies FormMutationFieldConfig<
 	ConstructionSiteFormModel,
