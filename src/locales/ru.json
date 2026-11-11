@@ -225,6 +225,10 @@
 		}
 	},
 	"MaterialBalance": {
+		"commands": {
+			"expandGroup": "Развернуть группу «{group}»",
+			"collapseGroup": "Свернуть группу «{group}»"
+		},
 		"title": "Остатки материалов",
 		"sheetName": "Остатки материалов",
 		"generatedAt": "Сформирован",

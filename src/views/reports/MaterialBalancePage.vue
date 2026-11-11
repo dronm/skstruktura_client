@@ -39,6 +39,15 @@ const loading = ref(false);
 const siteError = ref("");
 const error = ref("");
 const generated = ref(false);
+const collapsedGroupIDs = ref(new Set<number>());
+
+const toggleGroup = (groupID: number): void => {
+	if (collapsedGroupIDs.value.has(groupID)) {
+		collapsedGroupIDs.value.delete(groupID);
+	} else {
+		collapsedGroupIDs.value.add(groupID);
+	}
+};
 
 const isConstructionManager = computed(() => {
 	return authStore.user?.role_id === "construction_site_manager";
@@ -125,10 +134,7 @@ const formatGroupQuantities = (group: MaterialBalanceGroup): string => {
 		.join("; ");
 };
 
-const formatValuation = (
-	value: number | null,
-	pending: boolean,
-): string => {
+const formatValuation = (value: number | null, pending: boolean): string => {
 	if (pending) {
 		return t("MaterialBalance.pending");
 	}
@@ -157,6 +163,7 @@ const generate = async (): Promise<void> => {
 	error.value = "";
 	try {
 		const response = await materialBalanceApi.list(site.id);
+		collapsedGroupIDs.value.clear();
 		rows.value = response.rows;
 		total.value = response.total;
 		generatedAt.value = response.generated_at;
@@ -218,6 +225,7 @@ watch(constructionSiteID, (value, previousValue) => {
 	}
 
 	rows.value = [];
+	collapsedGroupIDs.value.clear();
 	total.value = 0;
 	generatedAt.value = null;
 	appliedConstructionSite.value = null;
@@ -385,11 +393,23 @@ onMounted(() => {
 									)
 								}}
 							</th>
-							<th class="w-48 border border-gray-300 px-2 py-2 text-right">
-								{{ t("MaterialBalance.columns.averageCost") }}
+							<th
+								class="w-48 border border-gray-300 px-2 py-2 text-right"
+							>
+								{{
+									t(
+										"MaterialBalance.columns.averageCost",
+									)
+								}}
 							</th>
-							<th class="w-48 border border-gray-300 px-2 py-2 text-right">
-								{{ t("MaterialBalance.columns.amount") }}
+							<th
+								class="w-48 border border-gray-300 px-2 py-2 text-right"
+							>
+								{{
+									t(
+										"MaterialBalance.columns.amount",
+									)
+								}}
 							</th>
 						</tr>
 					</thead>
@@ -406,19 +426,95 @@ onMounted(() => {
 									font-weight: 700;
 								"
 							>
-								<td colspan="2" class="border border-gray-300 px-3 py-2">
-									{{ group.name }}
+								<td
+									colspan="2"
+									class="border border-gray-300 px-3 py-2"
+								>
+									<button
+										type="button"
+										class="flex w-full cursor-pointer items-center gap-2 rounded text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700"
+										data-report-exclude
+										:aria-expanded="
+											!collapsedGroupIDs.has(
+												group.id,
+											)
+										"
+										:aria-label="
+											t(
+												collapsedGroupIDs.has(
+													group.id,
+												)
+													? 'MaterialBalance.commands.expandGroup'
+													: 'MaterialBalance.commands.collapseGroup',
+												{
+													group: group.name,
+												},
+											)
+										"
+										@click="
+											toggleGroup(
+												group.id,
+											)
+										"
+									>
+										<i
+											class="pi shrink-0"
+											:class="
+												collapsedGroupIDs.has(
+													group.id,
+												)
+													? 'pi-folder'
+													: 'pi-folder-open'
+											"
+											aria-hidden="true"
+											data-report-exclude
+										/>
+										<span
+											>{{
+												group.name
+											}}</span
+										>
+									</button>
+									<span
+										class="hidden print:inline"
+										>{{
+											group.name
+										}}</span
+									>
 								</td>
-								<td class="border border-gray-300 px-3 py-2 text-right">
-									{{ formatGroupQuantities(group) }}
+								<td
+									class="border border-gray-300 px-3 py-2 text-right"
+								>
+									{{
+										formatGroupQuantities(
+											group,
+										)
+									}}
 								</td>
-								<td class="border border-gray-300 px-3 py-2" />
-								<td class="border border-gray-300 px-3 py-2 text-right">
-									{{ formatValuation(group.amountPending ? null : group.amount, group.amountPending) }}
+								<td
+									class="border border-gray-300 px-3 py-2"
+								/>
+								<td
+									class="border border-gray-300 px-3 py-2 text-right"
+								>
+									{{
+										formatValuation(
+											group.amountPending
+												? null
+												: group.amount,
+											group.amountPending,
+										)
+									}}
 								</td>
 							</tr>
 							<tr
 								v-for="row in group.rows"
+								:class="{
+									'material-balance-row-collapsed':
+										collapsedGroupIDs.has(
+											group.id,
+										),
+								}"
 								:key="
 									row.material_id
 								"
@@ -426,11 +522,17 @@ onMounted(() => {
 								<td
 									class="border border-gray-300 px-3 py-1.5"
 								>
-									{{
-										row
-											.material
-											.descr
-									}}
+									<div
+										style="
+											padding-inline-start: 3rem;
+										"
+									>
+										{{
+											row
+												.material
+												.descr
+										}}
+									</div>
 								</td>
 								<td
 									class="border border-gray-300 px-3 py-1.5"
@@ -450,11 +552,25 @@ onMounted(() => {
 										)
 									}}
 								</td>
-								<td class="border border-gray-300 px-3 py-1.5 text-right">
-									{{ formatValuation(row.average_cost, row.amount_pending) }}
+								<td
+									class="border border-gray-300 px-3 py-1.5 text-right"
+								>
+									{{
+										formatValuation(
+											row.average_cost,
+											row.amount_pending,
+										)
+									}}
 								</td>
-								<td class="border border-gray-300 px-3 py-1.5 text-right">
-									{{ formatValuation(row.amount, row.amount_pending) }}
+								<td
+									class="border border-gray-300 px-3 py-1.5 text-right"
+								>
+									{{
+										formatValuation(
+											row.amount,
+											row.amount_pending,
+										)
+									}}
 								</td>
 							</tr>
 						</template>
@@ -472,12 +588,25 @@ onMounted(() => {
 						</tr>
 					</tbody>
 					<tfoot v-if="total > 0">
-						<tr class="bg-slate-100 font-bold text-slate-900">
-							<td colspan="4" class="border border-gray-300 px-3 py-2">
+						<tr
+							class="bg-slate-100 font-bold text-slate-900"
+						>
+							<td
+								colspan="4"
+								class="border border-gray-300 px-3 py-2"
+							>
 								Итого по отчёту
 							</td>
-							<td class="border border-gray-300 px-3 py-2 text-right">
-								{{ formatValuation(reportAmount, reportAmount === null) }}
+							<td
+								class="border border-gray-300 px-3 py-2 text-right"
+							>
+								{{
+									formatValuation(
+										reportAmount,
+										reportAmount ===
+											null,
+									)
+								}}
 							</td>
 						</tr>
 					</tfoot>
@@ -490,3 +619,11 @@ onMounted(() => {
 		</ReportContainer>
 	</div>
 </template>
+
+<style scoped>
+@media screen {
+	.material-balance-row-collapsed {
+		display: none;
+	}
+}
+</style>

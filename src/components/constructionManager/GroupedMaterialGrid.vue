@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, type VNode } from "vue";
+import { computed, ref, watch, type VNode } from "vue";
+import { useI18n } from "vue-i18n";
 
 import ProgressSpinner from "primevue/progressspinner";
 
@@ -17,6 +18,7 @@ const props = withDefaults(
 		extraColumnCount?: number;
 		minWidth?: string;
 		fitWidth?: boolean;
+		collapsibleGroups?: boolean;
 	}>(),
 	{
 		loading: false,
@@ -24,6 +26,7 @@ const props = withDefaults(
 		extraColumnCount: 0,
 		minWidth: "38rem",
 		fitWidth: false,
+		collapsibleGroups: false,
 	},
 );
 
@@ -31,6 +34,24 @@ defineSlots<{
 	"extra-headers": () => VNode[];
 	"extra-cells": (props: { row: MaterialWorkbenchRow }) => VNode[];
 }>();
+
+const { t } = useI18n();
+const collapsedGroupIDs = ref(new Set<number>());
+
+const toggleGroup = (groupID: number): void => {
+	if (collapsedGroupIDs.value.has(groupID)) {
+		collapsedGroupIDs.value.delete(groupID);
+	} else {
+		collapsedGroupIDs.value.add(groupID);
+	}
+};
+
+watch(
+	() => props.rows,
+	() => {
+		collapsedGroupIDs.value.clear();
+	},
+);
 
 const groups = computed<MaterialWorkbenchGroup[]>(() => {
 	const grouped = new Map<number, MaterialWorkbenchGroup>();
@@ -138,18 +159,94 @@ const formatNumber = (value: number): string => {
 							"
 							class="border-t border-sky-200 px-3 py-2.5 text-center text-lg font-bold"
 						>
-							{{ group.name }}
+							<button
+								v-if="
+									props.collapsibleGroups
+								"
+								type="button"
+								class="flex w-full cursor-pointer items-center gap-2 rounded text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700"
+								data-report-exclude
+								:aria-expanded="
+									!collapsedGroupIDs.has(
+										group.id,
+									)
+								"
+								:aria-label="
+									t(
+										collapsedGroupIDs.has(
+											group.id,
+										)
+											? 'MaterialBalance.commands.expandGroup'
+											: 'MaterialBalance.commands.collapseGroup',
+										{
+											group: group.name,
+										},
+									)
+								"
+								@click="
+									toggleGroup(
+										group.id,
+									)
+								"
+							>
+								<i
+									class="pi shrink-0"
+									:class="
+										collapsedGroupIDs.has(
+											group.id,
+										)
+											? 'pi-folder'
+											: 'pi-folder-open'
+									"
+									aria-hidden="true"
+									data-report-exclude
+								/>
+								<span>{{
+									group.name
+								}}</span>
+							</button>
+							<span
+								v-if="
+									props.collapsibleGroups
+								"
+								class="hidden print:inline"
+								>{{
+									group.name
+								}}</span
+							>
+							<template v-else>{{
+								group.name
+							}}</template>
 						</td>
 					</tr>
 					<tr
 						v-for="row in group.rows"
 						:key="row.materialID"
 						class="material-workbench-row border-t border-slate-200 align-middle"
+						:class="{
+							'material-workbench-row-collapsed':
+								props.collapsibleGroups &&
+								collapsedGroupIDs.has(
+									group.id,
+								),
+						}"
 					>
 						<td
 							class="material-workbench-name px-3 py-2 text-slate-900"
 						>
-							{{ row.materialName }}
+							<span
+								class="block"
+								:style="{
+									paddingInlineStart:
+										props.collapsibleGroups
+											? '3rem'
+											: undefined,
+								}"
+							>
+								{{
+									row.materialName
+								}}
+							</span>
 						</td>
 						<td
 							class="material-workbench-unit px-2 py-2 text-slate-600"
@@ -280,6 +377,10 @@ const formatNumber = (value: number): string => {
 
 /* Use the available grid width, including when a summary occupies a sidebar. */
 @media screen {
+	.material-workbench-row-collapsed {
+		display: none !important;
+	}
+
 	@container material-workbench (max-width: 40rem) {
 		.material-workbench-fit table,
 		.material-workbench-fit tbody {

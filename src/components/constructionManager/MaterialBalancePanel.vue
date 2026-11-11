@@ -131,6 +131,7 @@ watch(
 				:error="error"
 				:emptyText="t('MaterialBalance.empty')"
 				fitWidth
+				collapsibleGroups
 			/>
 		</ReportContainer>
 	</div>
